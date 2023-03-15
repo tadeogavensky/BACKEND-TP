@@ -14,7 +14,7 @@ export const Home = () => {
 
   useEffect(()=>{sendHome()},[])
   return (
-    <div dangerouslySetInnerHTML={{ __html: htmlContent }}>
+    <div /* dangerouslySetInnerHTML={{ __html: htmlContent }} */>
       <Header />
       <Main />
     </div>
