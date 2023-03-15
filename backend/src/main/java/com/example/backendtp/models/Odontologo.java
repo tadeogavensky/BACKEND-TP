@@ -13,6 +13,7 @@ public class Odontologo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "apellido", columnDefinition = "VARCHAR(255)")
     private String apellido;
 
@@ -22,8 +23,8 @@ public class Odontologo {
     @Column(name = "matricula", columnDefinition = "VARCHAR(255)")
     private String matricula;
 
-    @OneToMany(mappedBy = "odontologo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Paciente> pacientes;
+    @OneToMany(mappedBy = "odontologo")
+    private List<Paciente> pacientes = new ArrayList<>();
 
     @Column(name = "deleted", columnDefinition = "BOOLEAN")
     private Boolean deleted;
@@ -36,6 +37,7 @@ public class Odontologo {
         this.deleted = deleted;
     }
     public Odontologo(){}
+
 
     public Long getId() {
         return id;

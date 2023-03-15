@@ -14,12 +14,14 @@ public class Paciente {
     private String apellido;
     @Column(name = "nombre", columnDefinition = "varchar(255)")
     private String nombre;
-    @OneToOne(mappedBy = "paciente")
+
+    @OneToOne(mappedBy = "paciente", cascade = CascadeType.ALL)
     private Domicilio domicilio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "odontologo_id")
     private Odontologo odontologo;
+
     @Column(name = "dni", columnDefinition = "INT")
     private Integer dni;
     @Column(name = "fecha_alta", columnDefinition = "DATE")
@@ -37,6 +39,7 @@ public class Paciente {
     }
 
     public Paciente(){}
+
 
     public Long getId() {
         return id;
