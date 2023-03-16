@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "pacientes")
 public class Paciente {
 
     @Id
@@ -24,17 +25,16 @@ public class Paciente {
 
     @Column(name = "dni", columnDefinition = "INT")
     private Integer dni;
-    @Column(name = "fecha_alta", columnDefinition = "DATE")
-    private LocalDate  fechaAlta;
+
     @Column(name = "deleted", columnDefinition = "BOOLEAN")
     private boolean deleted;
 
-    public Paciente(String apellido, String nombre, Domicilio domicilio, Integer dni, LocalDate  fechaAlta, boolean deleted) {
+    public Paciente(String apellido, String nombre, Domicilio domicilio, Integer dni, boolean deleted) {
         this.apellido = apellido;
         this.nombre = nombre;
         this.domicilio = domicilio;
         this.dni = dni;
-        this.fechaAlta = fechaAlta;
+
         this.deleted = deleted;
     }
 
@@ -77,13 +77,7 @@ public class Paciente {
         this.dni = dni;
     }
 
-    public LocalDate  getFechaAlta() {
-        return fechaAlta;
-    }
 
-    public void setFechaAlta(LocalDate  fechaAlta) {
-        this.fechaAlta = fechaAlta;
-    }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;

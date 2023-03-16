@@ -1,11 +1,11 @@
 package com.example.backendtp.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.nio.file.FileAlreadyExistsException;
 
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,6 +15,8 @@ public class Usuario {
 
     private boolean role;
     //1 para ADMIN, 0 para USER
+
+    private boolean deleted;
 
 
     public Usuario(String username, String password, boolean role) {
@@ -37,5 +39,15 @@ public class Usuario {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

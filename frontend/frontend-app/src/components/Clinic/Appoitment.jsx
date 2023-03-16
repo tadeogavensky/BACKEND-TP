@@ -134,7 +134,7 @@ function submitForm(event) {
 
       <div
         id="form-container"
-        className="hidden fixed inset-0 items-center justify-center bg-gray-500 bg-opacity-75"
+        className="hidden fixed inset-0 items-center justify-center backdrop-blur-md bg-opacity-75 "
       >
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-lg font-medium mb-4">Nuevo turno</h2>
@@ -146,13 +146,13 @@ function submitForm(event) {
               <select
                 id="paciente"
                 name="paciente"
-                className="rounded-lg border-gray-400 py-2 px-3"
+                className="rounded-lg border-gray-400 border-solid border py-2 px-3"
               >
                 <option value="">Seleccionar paciente</option>
                 {
                 pacientes.map(paciente =>{
                     return(
-                    <option selected value={paciente.apellido}>Dr/a. {paciente.apellido}</option>
+                    <option selected value={paciente.apellido}>{paciente.apellido}, {paciente.nombre}</option>
                     )
                 })}
               </select>
@@ -164,7 +164,7 @@ function submitForm(event) {
               <select
                 id="odontologo"
                 name="odontologo"
-                className="rounded-lg border-gray-400 py-2 px-3"
+                className="rounded-lg border-gray-400 border-solid border py-2 px-4"
               >
                 <option selected value="">Seleccionar odontólogo</option>
                 {
@@ -184,7 +184,7 @@ function submitForm(event) {
                 id="fecha"
                 name="fecha"
                 type="date"
-                className="rounded-lg border-gray-400 py-2 px-3"
+                className="rounded-lg border-gray-400 border-solid border py-2 px-3"
               />
             </div>
             <div className="flex justify-end">

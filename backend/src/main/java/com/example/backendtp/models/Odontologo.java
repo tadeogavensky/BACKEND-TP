@@ -1,14 +1,17 @@
 package com.example.backendtp.models;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import org.hibernate.*;
-import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.*;
+
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "odontologos")
 public class Odontologo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

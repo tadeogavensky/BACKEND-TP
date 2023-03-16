@@ -2,23 +2,15 @@ package com.example.backendtp.controllers;
 
 
 import com.example.backendtp.entities.UsuarioEntity;
-import com.example.backendtp.models.Paciente;
 import com.example.backendtp.models.Usuario;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.ui.Model;
+import com.example.backendtp.service.UsuarioService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/user")
 public class UsuarioController {
 
-    private final UsuarioEntity usuarioEntity;
-
-    public UsuarioController(UsuarioEntity usuarioEntity) {
-        this.usuarioEntity = usuarioEntity;
-    }
+    UsuarioService usuarioService = new UsuarioService();
 
 
     @GetMapping("/login")
@@ -27,16 +19,10 @@ public class UsuarioController {
     }
 
     @PostMapping(path = "/login")
-    public String login(@ModelAttribute("username") String username, @ModelAttribute("password") String password, Model model){
+    public Usuario login(@ModelAttribute("username") String username, @ModelAttribute("password") String password){
+        return usuarioService.login(username, password);
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        Usuario usuario = usuarioEntity.findByUserNameAndPassword(username, passwordEncoder.encode(password));
-        if (usuario != null) {
-            return "redirect:/home";
-        } else {
-            model.addAttribute("error", "El usuario o contraseña son incorrectos");
-            return "login";
-        }
+
     }
 
     @GetMapping("/signup")
@@ -46,17 +32,9 @@ public class UsuarioController {
 
 
     @PostMapping(path = "/signup")
-    public String signup(@ModelAttribute("username") Usuario usuario, Model model){
+    public Usuario signup(@ModelAttribute("username") Usuario usuario){
 
-        Optional<Usuario> OptUsuario = Optional.ofNullable(usuarioEntity.findByUserName(usuario.getUsername()));
-        if (OptUsuario.isPresent()){
-            model.addAttribute("error", "El usuario ya existe!");
-            return "login";
-        }else{
-            usuarioEntity.save(usuario);
-            return "redirect:/home";
-        }
-
+        return usuarioService.signup(usuario);
     }
 
 }

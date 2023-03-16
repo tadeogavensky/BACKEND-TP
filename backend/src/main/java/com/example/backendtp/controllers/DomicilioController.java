@@ -2,10 +2,14 @@ package com.example.backendtp.controllers;
 
 import com.example.backendtp.entities.DomicilioEntity;
 import com.example.backendtp.models.Domicilio;
+import com.example.backendtp.models.Paciente;
+import com.example.backendtp.service.DomicilioService;
+import com.example.backendtp.service.PacienteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -13,42 +17,31 @@ import java.util.Optional;
 @RequestMapping(path = "api/v1/domicilio")
 public class DomicilioController {
 
-    private final DomicilioEntity domicilioEntity;
+    DomicilioService domicilioService = new DomicilioService();
 
     private final Logger log = LoggerFactory.getLogger(DomicilioController.class);
 
-    public DomicilioController(DomicilioEntity domicilioEntity) {
-        this.domicilioEntity = domicilioEntity;
-    }
 
     @PostMapping()
-    public Domicilio create(@RequestBody Domicilio domicilio, @RequestHeader HttpHeaders headers) {
-        return domicilioEntity.save(domicilio);
+    public String create(@RequestBody Domicilio domicilio, @RequestHeader HttpHeaders headers) {
+        domicilioService.save(domicilio);
+        return "redirect:/savesuccess-page";
+    }
+
+    @GetMapping("/updateDomicilioForm")
+    public String showUpdateDomicilioForm(Model model) {
+        model.addAttribute("Domicilio", new Domicilio());
+        return "updateDomicilioForm";
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Domicilio> update(@RequestBody Domicilio domicilio) {
-
-        if(!domicilioEntity.existsById(domicilio.getId())){
-            log.warn("Domicilio no existe!");
-            return ResponseEntity.notFound().build();
-        }
-        Domicilio result =domicilioEntity.save(domicilio);
-        return ResponseEntity.ok(result);
+    public String update(@RequestBody Domicilio domicilio) {
+        domicilioService.update(domicilio);
+        return "redirect:/updatesuccess-page";
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<DomicilioEntity> safeDelete(@PathVariable Long id){
-        if(!domicilioEntity.existsById(id)){
-            log.warn("El domicilio no existe!");
-            return ResponseEntity.notFound().build();
-        }
-        Optional<Domicilio> OptDomicilio = domicilioEntity.findById(id);
-        if (OptDomicilio.isPresent()){
-            Domicilio domicilio = OptDomicilio.get();
-            domicilio.setDeleted(true);
-            domicilioEntity.save(domicilio);
-        }
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Domicilio> safeDelete(@PathVariable Long id){
+        return domicilioService.safeDelete(id);
     }
 }

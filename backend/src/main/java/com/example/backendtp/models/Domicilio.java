@@ -3,6 +3,7 @@ package com.example.backendtp.models;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "domicilios")
 public class Domicilio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
