@@ -51,44 +51,44 @@ export const Appoitment = () => {
     },
   ];
 
+  function submitForm(event) {
+    // Prevent the default form submission behavior
+    event.preventDefault();
 
-function submitForm(event) {
-  // Prevent the default form submission behavior
-  event.preventDefault();
+    // Get the form input values
+    const paciente = document.getElementById("pacienteForm").value;
+    const odontologo = document.getElementById("odontologoForm").value;
+    const fecha = document.getElementById("fechaForm").value;
 
-  // Get the form input values
-  const paciente = document.getElementById('pacienteForm').value;
-  const odontologo = document.getElementById('odontologoForm').value;
-  const fecha = document.getElementById('fechaForm').value;
+    // Create the request body
+    const requestBody = {
+      paciente,
+      odontologo,
+      fecha,
+    };
 
-  // Create the request body
-  const requestBody = {
-    paciente,
-    odontologo,
-    fecha
-  };
+    // Send the request to the API endpoint
+    axios
+      .post("https://localhost:8000/turnos", requestBody)
+      .then((response) => {
+        if (response.status === 200) {
+          // Show a success message to the user
+          alert("Turno guardado correctamente");
 
-  // Send the request to the API endpoint
-  axios.post('https://localhost:8000/turnos', requestBody)
-  .then(response => {
-    if (response.status === 200) {
-      // Show a success message to the user
-      alert('Turno guardado correctamente');
-      
-      // Reset the form
-      document.getElementById('pacienteForm').value = '';
-      document.getElementById('odontologoForm').value = '';
-      document.getElementById('fechaForm').value = '';
-    } else {
-      // Show an error message to the user
-      alert('Error al guardar el turno');
-    }
-  })
-  .catch(error => {
-    // Show an error message to the user
-    alert('Error al guardar el turno');
-  });
-}
+          // Reset the form
+          document.getElementById("pacienteForm").value = "";
+          document.getElementById("odontologoForm").value = "";
+          document.getElementById("fechaForm").value = "";
+        } else {
+          // Show an error message to the user
+          alert("Error al guardar el turno");
+        }
+      })
+      .catch((error) => {
+        // Show an error message to the user
+        alert("Error al guardar el turno");
+      });
+  }
 
   const showForm = () => {
     let form = document.getElementById("form-container");
@@ -99,7 +99,6 @@ function submitForm(event) {
     let form = document.getElementById("form-container");
     form.style.display = "none";
     window.location.href = "http://localhost:3000/";
-
   };
 
   let pacientes = [
@@ -107,7 +106,7 @@ function submitForm(event) {
     { nombre: "María", apellido: "García" },
     { nombre: "Pedro", apellido: "Martínez" },
     { nombre: "Lucía", apellido: "Hernández" },
-    { nombre: "Luis", apellido: "González" }
+    { nombre: "Luis", apellido: "González" },
   ];
 
   let odontologos = [
@@ -115,7 +114,7 @@ function submitForm(event) {
     { nombre: "Luciana", apellido: "Pérez" },
     { nombre: "Marcelo", apellido: "Fernández" },
     { nombre: "Laura", apellido: "González" },
-    { nombre: "Diego", apellido: "Rodríguez" }
+    { nombre: "Diego", apellido: "Rodríguez" },
   ];
 
   return (
@@ -135,10 +134,16 @@ function submitForm(event) {
       <div
         id="form-container"
         className="hidden fixed inset-0 items-center justify-center backdrop-blur-md bg-opacity-75 "
+        style={{ marginTop: "0" }}
       >
-        <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
           <h2 className="text-lg font-medium mb-4">Nuevo turno</h2>
-          <form className="space-y-4" onSubmit={()=>{submitForm()}}>
+          <form
+            className="space-y-4"
+            onSubmit={() => {
+              submitForm();
+            }}
+          >
             <div className="flex flex-col">
               <label className="mb-1 font-medium" for="paciente">
                 Paciente
@@ -149,11 +154,12 @@ function submitForm(event) {
                 className="rounded-lg border-gray-400 border-solid border py-2 px-3"
               >
                 <option value="">Seleccionar paciente</option>
-                {
-                pacientes.map(paciente =>{
-                    return(
-                    <option selected value={paciente.apellido}>{paciente.apellido}, {paciente.nombre}</option>
-                    )
+                {pacientes.map((paciente) => {
+                  return (
+                    <option selected value={paciente.apellido}>
+                      {paciente.apellido}, {paciente.nombre}
+                    </option>
+                  );
                 })}
               </select>
             </div>
@@ -166,14 +172,16 @@ function submitForm(event) {
                 name="odontologo"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-4"
               >
-                <option selected value="">Seleccionar odontólogo</option>
-                {
-                odontologos.map(odontologo =>{
-                    return(
-                    <option selected value={odontologo.apellido}>Dr/a. {odontologo.apellido}</option>
-                    )
+                <option selected value="">
+                  Seleccionar odontólogo
+                </option>
+                {odontologos.map((odontologo) => {
+                  return (
+                    <option selected value={odontologo.apellido}>
+                      Dr/a. {odontologo.apellido}
+                    </option>
+                  );
                 })}
-
               </select>
             </div>
             <div className="flex flex-col">
@@ -233,8 +241,11 @@ function submitForm(event) {
                     </td>
                     <td className="py-3 px-4 text-left">{turno.fecha}</td>
                     <td className="flex justify-center items-center align-middle">
-                      <td className="flex justify-center items-center align-middle">
-                        <button className="bg-orange-500 hover:bg-orange-600 focus:bg-orange-600 text-white rounded-sm p-2 my-2 transition-colors duration-300">
+                      <td className="flex justify-center items-center align-middle mt-1">
+                        <button
+                          type="button"
+                          class="inline-block rounded bg-orange-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-orange-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-orange-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-orange-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
+                        >
                           <BsPencil />
                         </button>
                       </td>
