@@ -1,15 +1,16 @@
 package com.example.backend_v2.services;
 
-import com.example.backend_v2.controllers.AddressController;
 import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.repositories.AddressRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class AddressService {
 
     private AddressRepository addressRepository;

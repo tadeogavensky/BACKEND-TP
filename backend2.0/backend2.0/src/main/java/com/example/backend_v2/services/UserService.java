@@ -5,11 +5,11 @@ import com.example.backend_v2.entities.User;
 import com.example.backend_v2.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -25,12 +25,17 @@ public class UserService {
 
 
     public User login(String username, String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return userRepository.findByUserNameAndPassword(username, passwordEncoder.encode(password));
+
+        return userRepository.findByUserNameAndPassword(username, password);
     }
 
-    public User signup(User user){
+    public List<User> findAll(){
+        return  userRepository.findAll();
+    }
 
+
+
+    public User signup(User user){
         return userRepository.save(user);
 
     }

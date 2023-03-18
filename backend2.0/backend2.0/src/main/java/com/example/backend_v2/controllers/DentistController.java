@@ -3,6 +3,7 @@ package com.example.backend_v2.controllers;
 
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.services.DentistService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -14,8 +15,8 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "api/v1/dentist")
 public class DentistController {
-
-    DentistService dentistService = new DentistService();
+    @Autowired
+    DentistService dentistService;
 
     @GetMapping(path = "/findAll")
     public List<Dentist> findAll() {

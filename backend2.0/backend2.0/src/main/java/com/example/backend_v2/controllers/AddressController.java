@@ -5,6 +5,7 @@ import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.services.AddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "api/v1/address")
 public class AddressController {
-
-    AddressService addressService = new AddressService();
+    @Autowired
+    AddressService addressService;
 
     private final Logger log = LoggerFactory.getLogger(AddressController.class);
 

@@ -4,6 +4,7 @@ import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.PatientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -15,8 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "api/v1/patient")
 public class PatientController {
-
-    PatientService patientService = new PatientService();
+    @Autowired
+    PatientService patientService;
 
     private final Logger log = LoggerFactory.getLogger(PatientController.class);
 
