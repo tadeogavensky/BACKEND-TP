@@ -3,6 +3,18 @@ import React, { useState } from "react";
 import { BsPencil } from "react-icons/bs";
 
 const PatientTable = () => {
+
+  const [firstName, setFirstName] = ("")
+  const [lastName, setLastName] = ("")
+  const [dni, setDni] = ("")
+  const [street, setStreet] = ("")
+  const [number, setNumber] = ("")
+  const [zipcode, setZipCode] = ("")
+  const [state, setState] = ("")
+
+
+
+
   const [patients, setPatients] = useState([
     {
       id: 1,
@@ -33,41 +45,31 @@ const PatientTable = () => {
   ]);
 
   function submitForm(event) {
-    // Prevent the default form submission behavior
     event.preventDefault();
 
-    // Get the form input values
-    const patient = document.getElementById("patientForm").value;
-    const dentist = document.getElementById("dentistForm").value;
-    const date = document.getElementById("dateForm").value;
+    const patient = {
+      lastName,
+      firstName,
+      dni,
+      address:{
+        street,
+        number,
+        zipcode,
+        state
+      }
+    }
 
-    // Create the request body
-    const requestBody = {
-      patient,
-      dentist,
-      date,
-    };
-
-    // Send the request to the API endpoint
     axios
-      .post("https://localhost:8000/turnos", requestBody)
-      .then((response) => {
-        if (response.status === 200) {
-          // Show a success message to the user
-          alert("Turno guardado correctamente");
+      .post("https://localhost:8080/api/v1/patient", patient)
+      .then((res) => {
+        if (res.status === 200) {
+     
 
-          // Reset the form
-          document.getElementById("patientForm").value = "";
-          document.getElementById("dentistForm").value = "";
-          document.getElementById("dateForm").value = "";
-        } else {
-          // Show an error message to the user
-          alert("Error al guardar el turno");
         }
       })
       .catch((error) => {
-        // Show an error message to the user
-        alert("Error al guardar el turno");
+     
+
       });
   }
 
@@ -98,7 +100,7 @@ const PatientTable = () => {
 
         <div
           id="form-patient-container"
-          className="hidden fixed inset-0 items-center justify-center backdrop-blur-md bg-opacity-75 "
+          className="hidden fixed inset-0 items-center justify-center bg-gray-800 bg-opacity-75 "
           style={{ marginTop: "0" }}
         >
           <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">

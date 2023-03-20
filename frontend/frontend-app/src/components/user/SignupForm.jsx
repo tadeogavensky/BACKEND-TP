@@ -1,12 +1,14 @@
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
+import Swal from "sweetalert2";
 
-export const SignupForm = ({ closeForm }) => {
+export const SignupForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [repeatPasswordError, setRepeatPasswordError] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+ 
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -26,6 +28,25 @@ export const SignupForm = ({ closeForm }) => {
 
   const submitForm = (e) => {
     e.preventDefault();
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+
+    if (username === "" || password === "" || confirmPassword === "") {
+      Toast.fire({
+        icon: "error",
+        title: "Please complete all fields!",
+      });
+      return; // stop form submission
+    }
     if (password !== confirmPassword) {
       setRepeatPasswordError("Passwords do not match");
       return; // stop form submission
@@ -39,13 +60,22 @@ export const SignupForm = ({ closeForm }) => {
 
     axios
       .post("http://localhost:8080/api/v1/user/signup", user)
-      .then((response) => {
-        console.log(response.data);
-        // handle response
+      .then((res) => {
+        if (res.request.status == 200) {
+          console.log("res :>> ", res.request.status);
+          Toast.fire({
+            icon: "success",
+            title: "User created successfully",
+          });
+        }
+        
       })
       .catch((error) => {
         console.log(error);
-        // handle error
+        Toast.fire({
+          icon: "error",
+          title: error.response.data,
+        });
       });
   };
 
@@ -115,6 +145,7 @@ export const SignupForm = ({ closeForm }) => {
           value={confirmPassword}
           onChange={handleConfirmPasswordChange}
           onBlur={validateRepeatPassword}
+          onSubmit={validateRepeatPassword}
         />
         {repeatPasswordError && (
           <p className="text-red-500 text-xs italic">{repeatPasswordError}</p>

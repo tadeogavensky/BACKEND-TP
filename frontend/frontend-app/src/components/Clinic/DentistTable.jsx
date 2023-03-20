@@ -86,7 +86,7 @@ export const DentistTable = () => {
 
           <div
             id="form-dentist-container"
-            className="hidden fixed inset-0 items-center justify-center backdrop-blur-md bg-opacity-75 "
+            className="hidden fixed inset-0 items-center justify-center  bg-gray-800 bg-opacity-75 "
             style={{ marginTop: "0" }}
           >
             <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">

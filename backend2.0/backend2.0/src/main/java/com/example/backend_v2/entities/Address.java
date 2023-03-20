@@ -89,4 +89,18 @@ public class Address {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", street='" + street + '\'' +
+                ", number=" + number +
+                ", zipcode=" + zipcode +
+                ", state='" + state + '\'' +
+                ", patient=" + patient +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

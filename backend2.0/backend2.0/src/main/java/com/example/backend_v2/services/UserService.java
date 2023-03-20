@@ -47,12 +47,10 @@ public class UserService {
 
 
     public User signup(User user) {
-        User existingUser = userRepository.findByUsername(user.getUsername());
-        if(existingUser != null){
-            log.warn("User already exists");
-            return null;
-        }
         return userRepository.save(user);
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

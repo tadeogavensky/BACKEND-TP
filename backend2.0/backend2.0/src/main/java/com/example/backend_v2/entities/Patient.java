@@ -93,4 +93,18 @@ public class Patient {
     public boolean isDeleted() {
         return deleted;
     }
+
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "id=" + id +
+                ", lastName='" + lastName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", address=" + address +
+                ", appointments=" + appointments +
+                ", dni=" + dni +
+                ", deleted=" + deleted +
+                '}';
+    }
 }
