@@ -13,7 +13,7 @@ public class Address {
     @Column(name = "number", nullable = false)
     private int number;
 
-    @Column(name = "zipcode", nullable = false)
+    @Column(name = "zip_code", nullable = false)
     private int zipcode;
     @Column(name = "state", nullable = false)
     private String state;

@@ -4,6 +4,7 @@ import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.repositories.AddressRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 @Service
 public class AddressService {
-
+    @Autowired
     private AddressRepository addressRepository;
 
     public void AddressController(AddressRepository addressRepository) {

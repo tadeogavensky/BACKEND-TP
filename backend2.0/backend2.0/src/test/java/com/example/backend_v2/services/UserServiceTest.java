@@ -1,8 +1,6 @@
 package com.example.backend_v2.services;
 
 import com.example.backend_v2.entities.User;
-import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +18,8 @@ public class UserServiceTest {
 
     @Test
     public void cargarDataSet() {
-        User user1 = new User("USUARIO1","12345",false);
-        User user2 = new User("USUARIO2","12345",false);
+        User user1 = new User("USUARIO1","12345");
+        User user2 = new User("USUARIO2","12345");
 
         userService.signup(user1);
         userService.signup(user2);

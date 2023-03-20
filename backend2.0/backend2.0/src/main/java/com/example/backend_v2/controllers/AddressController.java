@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "api/v1/address")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AddressController {
     @Autowired
     AddressService addressService;

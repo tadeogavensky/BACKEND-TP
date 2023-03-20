@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Header } from "./Header";
+
 import { Main } from "./Main";
+import {Navbar} from "./Navbar";
 
 
 export const Home = () => {
@@ -15,7 +16,7 @@ export const Home = () => {
   useEffect(()=>{sendHome()},[])
   return (
     <div /* dangerouslySetInnerHTML={{ __html: htmlContent }} */>
-      <Header />
+      <Navbar />
       <Main />
     </div>
   );

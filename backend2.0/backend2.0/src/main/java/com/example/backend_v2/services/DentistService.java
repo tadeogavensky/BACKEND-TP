@@ -6,6 +6,7 @@ import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.repositories.DentistRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 @Service
 public class DentistService {
+    @Autowired
     private DentistRepository dentistRepository;
 
     public void DentistController(DentistRepository dentistRepository) {
@@ -36,7 +38,7 @@ public class DentistService {
     public Dentist update( Dentist dentist) {
 
         if(!dentistRepository.existsById(dentist.getId())){
-            log.warn("Dentist no existe!");
+            log.warn("Dentist does not exists!");
         }
         return dentistRepository.save(dentist);
 
@@ -44,7 +46,7 @@ public class DentistService {
 
     public ResponseEntity<Dentist> safeDelete(Long id){
         if(!dentistRepository.existsById(id)){
-            log.warn("El dentist no existe!");
+            log.warn("Dentist does not exists!");
             return ResponseEntity.notFound().build();
         }
         Optional<Dentist> OptDentist = dentistRepository.findById(id);

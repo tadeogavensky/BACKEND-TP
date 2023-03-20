@@ -12,17 +12,18 @@ public class Dentist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "lastname", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "firstname", nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "registrationnumber", nullable = false)
+    @Column(name = "registration_number", nullable = false)
     private int registrationNumber;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dentist", cascade = CascadeType.ALL)
-    private List<Patient> patients;
+
+    @OneToMany(mappedBy = "dentist", cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
@@ -59,7 +60,13 @@ public class Dentist {
         this.firstName = firstname;
     }
 
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
 
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
+    }
     public int getRegistrationNumber() {
         return registrationNumber;
     }
@@ -69,14 +76,6 @@ public class Dentist {
     }
 
 
-
-    public List<Patient> getPatients() {
-        return patients;
-    }
-
-    public void setPatients(List<Patient> patients) {
-        this.patients = patients;
-    }
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }

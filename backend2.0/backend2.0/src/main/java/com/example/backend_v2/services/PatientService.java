@@ -4,6 +4,7 @@ import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.repositories.PatientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 @Service
 public class PatientService {
-
+    @Autowired
     private PatientRepository patientRepository;
 
     public void PatientController(PatientRepository patientRepository) {
@@ -36,7 +37,7 @@ public class PatientService {
     public Patient update( Patient patient) {
 
         if(!patientRepository.existsById(patient.getId())){
-            log.warn("Patient no existe!");
+            log.warn("Patient does not exists!");
         }
         return patientRepository.save(patient);
 
@@ -44,7 +45,7 @@ public class PatientService {
 
     public ResponseEntity<Patient> safeDelete(Long id){
         if(!patientRepository.existsById(id)){
-            log.warn("El patient no existe!");
+            log.warn("Patient does not exists!");
             return ResponseEntity.notFound().build();
         }
         Optional<Patient> OptPatient = patientRepository.findById(id);

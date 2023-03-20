@@ -2,23 +2,25 @@ package com.example.backend_v2.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Patient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "lastname", nullable = false )
+    @Column(name = "last_name", nullable = false )
     private String lastName;
-    @Column(name = "firstname", nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dentist_id")
-    private Dentist dentist;
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
+
 
     @Column(name = "dni", nullable = false)
     private Integer dni;
@@ -80,12 +82,12 @@ public class Patient {
         this.deleted = deleted;
     }
 
-    public Dentist getDentist() {
-        return dentist;
+    public List<Appointment> getAppointments() {
+        return appointments;
     }
 
-    public void setDentist(Dentist dentist) {
-        this.dentist = dentist;
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     public boolean isDeleted() {

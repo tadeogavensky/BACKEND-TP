@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/user")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
@@ -25,16 +26,20 @@ public class UserController {
         return userService.findAll();
     }
 
-    @PostMapping(path = "/login")
-    public ResponseEntity<User> login(/*@ModelAttribute("username") String username, @ModelAttribute("password") String password*/ @RequestBody String username,@RequestBody String password){
-        System.out.println(username + " " + password);
+    @PostMapping(path = "/login", consumes = "application/json")
+    public ResponseEntity<User> login(@RequestBody User user){
+        String username = user.getUsername();
+        String password = user.getPassword();
         return ResponseEntity.ok(userService.login(username, password));
     }
 
-    @PostMapping(path = "/signup")
+    @PostMapping(path = "/signup", consumes = "application/json")
     public ResponseEntity<User> signup(@RequestBody User user){
-        User createdUser = userService.signup(user);
-        return ResponseEntity.ok(createdUser);
+        System.out.println(user.toString());
+
+
+        return ResponseEntity.ok(userService.signup(user));
+
     }
 
 }
