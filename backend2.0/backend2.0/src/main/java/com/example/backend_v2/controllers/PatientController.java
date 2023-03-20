@@ -1,5 +1,6 @@
 package com.example.backend_v2.controllers;
 
+import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.entities.User;
@@ -43,15 +44,19 @@ public class PatientController {
         return ResponseEntity.ok(patientService.findById(id));
     }
 
-    @PostMapping()
-    public ResponseEntity<?> create(@RequestBody Patient patient) {
+    @PostMapping(path = "/",consumes = "application/json")
+    public ResponseEntity<?> save(@RequestBody Patient patient) {
         System.out.println("Patient " +patient.toString());
 
         Patient existingPatient = patientService.findByDNI(patient.getDni());
+        Address existingAddress = addressService.findByAddress(patient.getAddress().getStreet(),patient.getAddress().getNumber(),patient.getAddress().getZipcode(),patient.getAddress().getState());
 
         if (existingPatient != null) {
             return ResponseEntity.status(HttpStatus.FOUND).body("Patient already exists!");
-        } else {
+        } else if(existingAddress != null) {
+            patient.setAddress(existingAddress);
+            return ResponseEntity.ok(patientService.save(patient));
+        }else {
             addressService.save(patient.getAddress());
             return ResponseEntity.ok(patientService.save(patient));
         }

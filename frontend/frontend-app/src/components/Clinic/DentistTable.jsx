@@ -1,60 +1,97 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BsPencil } from "react-icons/bs";
+import Swal from "sweetalert2";
+
 
 export const DentistTable = () => {
-  const dentists = [
-    {
-      id: 1,
-      firstName: "John",
-      lastName: "Doe",
-      registrationNumber: "12345",
-    },
-    {
-      id: 2,
-      firstName: "Jane",
-      lastName: "Doe",
-      registrationNumber: "67890",
-    },
-  ];
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
 
-  function submitForm(event) {
-    // Prevent the default form submission behavior
-    event.preventDefault();
 
-    // Get the form input values
-    const patient = document.getElementById("patientForm").value;
-    const dentist = document.getElementById("dentistForm").value;
-    const date = document.getElementById("dateForm").value;
+  const [dentists, setDentists] = useState([]);
 
-    // Create the request body
-    const requestBody = {
-      patient,
-      dentist,
-      date,
-    };
+  const handleFirstName = (e) => {
+    setFirstName(e.target.value);
+  };
 
-    // Send the request to the API endpoint
+  const handleLastName = (e) => {
+    setLastName(e.target.value);
+  };
+  const handleRegistrationNumber = (e) => {
+    setRegistrationNumber(e.target.value);
+  };
+  
+  const fetchDentists = () => {
     axios
-      .post("https://localhost:8000/turnos", requestBody)
+      .get("http://localhost:8080/api/v1/dentist/findAll")
       .then((response) => {
-        if (response.status === 200) {
-          // Show a success message to the user
-          alert("Turno guardado correctamente");
-
-          // Reset the form
-          document.getElementById("patientForm").value = "";
-          document.getElementById("dentistForm").value = "";
-          document.getElementById("dateForm").value = "";
-        } else {
-          // Show an error message to the user
-          alert("Error al guardar el turno");
-        }
+        let json = JSON.stringify(response);
+        let data = JSON.parse(json);
+        setDentists(data.data);
       })
       .catch((error) => {
-        // Show an error message to the user
-        alert("Error al guardar el turno");
+        console.error(error);
       });
+  };
+
+  useEffect(() => {
+    fetchDentists();
+  }, []);
+
+  function submitForm(e) {
+    e.preventDefault();
+
+    const dentist = {
+      lastName,
+      firstName,
+      registrationNumber,
+    };
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+
+    if (
+      lastName === "" ||
+      firstName === "" ||
+      registrationNumber === ""
+    ) {
+      Toast.fire({
+        icon: "error",
+        title: "Please complete all fields!",
+      });
+      return;
+    } else {
+      console.log(dentist);
+      axios
+        .post("http://localhost:8080/api/v1/dentist/", dentist)
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("res :>> ", res);
+            Toast.fire({
+              icon: "success",
+              title: "Dentist created successfully",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+          Toast.fire({
+            icon: "error",
+            title: error.response.data,
+          });
+        });
+    }
   }
 
   const showForm = () => {
@@ -65,7 +102,6 @@ export const DentistTable = () => {
   const hideForm = () => {
     let form = document.getElementById("form-dentist-container");
     form.style.display = "none";
-
   };
 
   return (
@@ -91,12 +127,7 @@ export const DentistTable = () => {
           >
             <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
               <h2 className="text-lg font-medium mb-4">New dentist</h2>
-              <form
-                className="space-y-4"
-                onSubmit={() => {
-                  submitForm();
-                }}
-              >
+              <form className="space-y-4" onSubmit={submitForm}>
                 <div className="flex flex-col">
                   <label className="mb-1 font-medium" for="firstName">
                     First Name
@@ -106,6 +137,7 @@ export const DentistTable = () => {
                     name="firstName"
                     type="text"
                     className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                    onChange={handleFirstName}
                   />
                 </div>
                 <div className="flex flex-col">
@@ -117,6 +149,7 @@ export const DentistTable = () => {
                     name="lastName"
                     type="text"
                     className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                    onChange={handleLastName}
                   />
                 </div>
                 <div className="flex flex-col">
@@ -128,6 +161,7 @@ export const DentistTable = () => {
                     name="registrationNumber"
                     className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                     type="text"
+                    onChange={handleRegistrationNumber}
                   />
                 </div>
                 <div className="flex justify-start">

@@ -18,9 +18,6 @@ public class Address {
     @Column(name = "state", nullable = false)
     private String state;
 
-    @OneToOne
-    @JoinColumn(name = "patient_id")
-    private Patient patient;
 
     @Column(name = "deleted", nullable = false)
     private Boolean deleted;
@@ -74,13 +71,13 @@ public class Address {
         this.state = state;
     }
 
-    public Patient getPatient() {
+  /*  public Patient getPatient() {
         return patient;
     }
 
     public void setPatient(Patient patient) {
         this.patient = patient;
-    }
+    }*/
 
     public Boolean getDeleted() {
         return deleted;
@@ -99,7 +96,6 @@ public class Address {
                 ", number=" + number +
                 ", zipcode=" + zipcode +
                 ", state='" + state + '\'' +
-                ", patient=" + patient +
                 ", deleted=" + deleted +
                 '}';
     }

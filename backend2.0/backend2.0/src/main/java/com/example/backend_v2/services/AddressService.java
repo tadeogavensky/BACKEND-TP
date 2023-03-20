@@ -56,5 +56,8 @@ public class AddressService {
         }
         return ResponseEntity.noContent().build();
     }
-    
+
+    public Address findByAddress(String street, int number, int zipcode, String state) {
+        return addressRepository.findByAddress(street,number,zipcode,state);
+    }
 }

@@ -1,10 +1,13 @@
 package com.example.backend_v2.controllers;
 
 
+import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.entities.Dentist;
+import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.DentistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,28 +32,25 @@ public class DentistController {
         return dentistService.findById(id);
     }
 
-    @GetMapping("/newDentistForm")
-    public String showNewPacienteForm(Model model) {
-        model.addAttribute("Dentist", new Dentist());
-        return "newDentistForm";
+    @PostMapping(path = "/",consumes = "application/json")
+    public ResponseEntity<?> save(@RequestBody Dentist dentist) {
+        Dentist existingDentistByName = dentistService.findByRegistrationNumber(dentist.getRegistrationNumber());
+        Dentist existingDentistByRN = dentistService.findByDentist(dentist.getFirstName(),dentist.getLastName());
+
+        if (existingDentistByName != null) {
+            return ResponseEntity.status(HttpStatus.FOUND).body("Dentist already exists");
+        }else if(existingDentistByRN != null){
+            return ResponseEntity.status(HttpStatus.FOUND).body("Dentist already exists!");
+        }else{
+            return ResponseEntity.ok(dentistService.save(dentist));
+     }
     }
 
-    @PostMapping()
-    public String save(@ModelAttribute Dentist dentist, @RequestHeader HttpHeaders headers) {
-        dentistService.save(dentist);
-        return "redirect:/savesuccess-page";
-    }
 
-    @GetMapping("/updateDentistForm")
-    public String showUpdateDentistForm(Model model) {
-        model.addAttribute("Dentist", new Dentist());
-        return "updateDentistForm";
-    }
 
     @PutMapping(path = "/{id}")
-    public String update(@ModelAttribute("dentist") Dentist dentist) {
-        dentistService.update(dentist);
-        return "redirect:/updatesuccess-page";
+    public Dentist update(@RequestBody Dentist dentist) {
+       return dentistService.update(dentist);
     }
 
     @DeleteMapping("/{id}")

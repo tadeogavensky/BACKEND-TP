@@ -2,6 +2,7 @@ package com.example.backend_v2.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,10 +32,11 @@ public class Dentist {
 
 
 
-    public Dentist(String lastName, String firstName, int registrationNumber, boolean deleted) {
+    public Dentist(String lastName, String firstName, int registrationNumber, List<Appointment> appointments, boolean deleted) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.registrationNumber = registrationNumber;
+        this.appointments = appointments;
         this.deleted = false;
     }
     public Dentist(){}

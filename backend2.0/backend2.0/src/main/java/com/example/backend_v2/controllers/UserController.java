@@ -33,7 +33,7 @@ public class UserController {
         String password = user.getPassword();
         User loginUser = userService.login(username, password);
         if (loginUser == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found or invalid data");
         } else {
             return ResponseEntity.ok(loginUser);
         }

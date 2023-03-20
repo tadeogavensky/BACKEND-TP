@@ -19,11 +19,6 @@ export const LoginForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const user = {
-      username: username,
-      password: password,
-    };
-
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
@@ -35,6 +30,14 @@ export const LoginForm = () => {
         toast.addEventListener("mouseleave", Swal.resumeTimer);
       },
     });
+
+    if(username === "" || password === ""){
+      Toast.fire({
+        icon: "error",
+        title: "Please complete all fields!",
+      });
+      return; 
+    }
 
     axios
       .post("http://localhost:8080/api/v1/user/login", { username, password })

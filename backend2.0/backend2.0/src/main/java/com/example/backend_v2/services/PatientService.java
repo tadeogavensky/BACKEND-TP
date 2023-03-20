@@ -22,17 +22,17 @@ public class PatientService {
     private final Logger log = LoggerFactory.getLogger(PatientService.class);
 
     public List<Patient> findAll(){
-        return  patientRepository.findAll();
+        List<Patient> patients = patientRepository.findAll();
+        System.out.println(patients);
+        return  patients;
     }
 
     public Optional<Patient> findById(Long id){
         return  patientRepository.findById(id);
 
     }
-
     public Patient findByDNI(int dni){
         return patientRepository.findByDNI(dni);
-
     }
     public Patient save(Patient patient) {
         return patientRepository.save(patient);

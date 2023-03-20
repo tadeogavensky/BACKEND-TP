@@ -2,6 +2,7 @@ package com.example.backend_v2.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,8 +16,10 @@ public class Patient {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id")
+  /*  @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")*/
+
+    @ManyToOne(fetch = FetchType.EAGER)
     private Address address;
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<Appointment> appointments;
@@ -29,11 +32,12 @@ public class Patient {
     private boolean deleted;
 
 
-    public Patient(String lastName, String firstname, Address address, Integer dni, boolean deleted) {
+    public Patient(String lastName, String firstname,Integer dni, Address address,List<Appointment> appointments, boolean deleted) {
         this.lastName = lastName;
         this.firstName = firstname;
-        this.address = address;
         this.dni = dni;
+        this.address = address;
+        this.appointments = appointments;
         this.deleted = false;
     }
 
@@ -101,9 +105,9 @@ public class Patient {
                 "id=" + id +
                 ", lastName='" + lastName + '\'' +
                 ", firstName='" + firstName + '\'' +
+                ", dni=" + dni +
                 ", address=" + address +
                 ", appointments=" + appointments +
-                ", dni=" + dni +
                 ", deleted=" + deleted +
                 '}';
     }

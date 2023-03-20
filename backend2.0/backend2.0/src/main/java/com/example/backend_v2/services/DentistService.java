@@ -3,6 +3,7 @@ package com.example.backend_v2.services;
 
 
 import com.example.backend_v2.entities.Dentist;
+import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.repositories.DentistRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,15 @@ public class DentistService {
         return OptDentist.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
+    public Dentist findByRegistrationNumber(int rn){
+        return dentistRepository.findByRegistrationNumber(rn);
+    }
+
+    public Dentist findByDentist(String firstName, String lastName){
+        return dentistRepository.findByDentist(firstName,lastName);
+    }
+
     public Dentist save(Dentist dentist) {
         return dentistRepository.save(dentist);
     }
@@ -43,6 +53,8 @@ public class DentistService {
         return dentistRepository.save(dentist);
 
     }
+
+
 
     public ResponseEntity<Dentist> safeDelete(Long id){
         if(!dentistRepository.existsById(id)){
