@@ -42,7 +42,10 @@ public class AppointmentController {
     @PostMapping(path = "/", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody Appointment appointment) {
         System.out.println("new appointment " + appointment.toString());
-            return ResponseEntity.ok(appointmentService.save(appointment));
+            appointment.setPatient(appointment.getPatient());
+        appointment.setDentist(appointment.getDentist());
+
+        return ResponseEntity.ok(appointmentService.save(appointment));
     }
 
 
