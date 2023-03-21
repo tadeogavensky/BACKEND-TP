@@ -11,6 +11,9 @@ export const DentistTable = () => {
 
 
   const [dentists, setDentists] = useState([]);
+  
+  const [rnError, setRnError] = useState("");
+
 
   const handleFirstName = (e) => {
     setFirstName(e.target.value);
@@ -71,13 +74,17 @@ export const DentistTable = () => {
         title: "Please complete all fields!",
       });
       return;
-    } else {
+    } else if( !/^[0-9]*$/.test(registrationNumber)) {
+      Toast.fire({
+        icon: "error",
+        title: "Registration number must be numeric!",
+      });
+    }else{
       console.log(dentist);
       axios
         .post("http://localhost:8080/api/v1/dentist/", dentist)
         .then((res) => {
           if (res.status === 200) {
-            console.log("res :>> ", res);
             Toast.fire({
               icon: "success",
               title: "Dentist created successfully",
@@ -85,7 +92,6 @@ export const DentistTable = () => {
           }
         })
         .catch((error) => {
-          console.log("error :>> ", error);
           Toast.fire({
             icon: "error",
             title: error.response.data,
@@ -102,6 +108,14 @@ export const DentistTable = () => {
   const hideForm = () => {
     let form = document.getElementById("form-dentist-container");
     form.style.display = "none";
+  };
+
+  const validateRN = () => {
+    if (!/^[0-9]*$/.test(registrationNumber)) {
+      setRnError("Registration number must be numeric");
+    } else {
+      setRnError("");
+    }
   };
 
   return (
@@ -159,10 +173,19 @@ export const DentistTable = () => {
                   <input
                     id="registrationNumber"
                     name="registrationNumber"
-                    className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                    className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
+                      rnError ? "border-red-500" : ""
+                    }`}
                     type="text"
                     onChange={handleRegistrationNumber}
+                      onBlur={validateRN}
+                      onSubmit={validateRN}
                   />
+                     {rnError && (
+                      <p className="text-red-500 text-xs italic">
+                        {rnError}
+                      </p>
+                    )}
                 </div>
                 <div className="flex justify-start">
                   <button
@@ -178,7 +201,7 @@ export const DentistTable = () => {
                       hideForm();
                     }}
                   >
-                    Cancel
+                    Close
                   </button>
                 </div>
               </form>

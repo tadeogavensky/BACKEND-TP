@@ -14,6 +14,11 @@ const PatientTable = () => {
 
   const [patients, setPatients] = useState([]);
 
+  const [dniError, setDniError] = useState("");
+  const [numberError, setNumberError] = useState("");
+  const [zipcodeError, setZipcodeError] = useState("");
+
+
   const handleFirstName = (e) => {
     setFirstName(e.target.value);
   };
@@ -52,6 +57,9 @@ const PatientTable = () => {
 
   useEffect(() => {
     fetchPatients();
+    validateDni();
+    validateNumber();
+    validateZipcode();
   }, []);
 
   function submitForm(e) {
@@ -66,7 +74,7 @@ const PatientTable = () => {
         number,
         zipcode,
         state,
-        deleted:false
+        deleted: false,
       },
     };
 
@@ -96,8 +104,17 @@ const PatientTable = () => {
         title: "Please complete all fields!",
       });
       return;
+    } else if (
+      !/^[0-9]*$/.test(dni) ||
+      !/^[0-9]*$/.test(zipcode) ||
+      !/^[0-9]*$/.test(number)
+    ) {
+      Toast.fire({
+        icon: "error",
+        title: "DNI, zip code and number must be numeric!",
+      });
     } else {
-      console.log(patient)
+      console.log(patient);
       axios
         .post("http://localhost:8080/api/v1/patient/", patient)
         .then((res) => {
@@ -127,6 +144,30 @@ const PatientTable = () => {
   const hideForm = () => {
     let form = document.getElementById("form-patient-container");
     form.style.display = "none";
+  };
+
+  const validateDni = () => {
+    if (!/^[0-9]*$/.test(dni)) {
+      setDniError("DNI must be numeric");
+    } else {
+      setDniError("");
+    }
+  };
+
+  const validateNumber = () => {
+    if (!/^[0-9]*$/.test(number)) {
+      setNumberError("Street number must be numeric");
+    } else {
+      setNumberError("");
+    }
+  };
+
+  const validateZipcode = () => {
+    if (!/^[0-9]*$/.test(number)) {
+      setZipcodeError("Zip code must be numeric");
+    } else {
+      setZipcodeError("");
+    }
   };
 
   return (
@@ -182,12 +223,19 @@ const PatientTable = () => {
                   DNI
                 </label>
                 <input
+                  className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
+                    dniError ? "border-red-500" : ""
+                  }`}
                   id="registrationNumber"
                   name="registrationNumber"
-                  className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                   type="text"
                   onChange={handleDNI}
+                  onBlur={validateDni}
+                  onSubmit={validateDni}
                 />
+                {dniError && (
+                  <p className="text-red-500 text-xs italic">{dniError}</p>
+                )}
               </div>
               <div className="flex flex-col">
                 <label className="mb-1 font-medium" htmlFor="street">
@@ -214,9 +262,18 @@ const PatientTable = () => {
                       id="number"
                       name="number"
                       type="text"
-                      className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                      className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
+                        numberError ? "border-red-500" : ""
+                      }`}
                       onChange={handleNumber}
+                      onBlur={validateNumber}
+                      onSubmit={validateNumber}
                     />
+                    {numberError && (
+                      <p className="text-red-500 text-xs italic">
+                        {numberError}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col">
                     <label className="mb-1 font-medium" htmlFor="zipCode">
@@ -226,9 +283,18 @@ const PatientTable = () => {
                       id="zipCode"
                       name="zipCode"
                       type="text"
-                      className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                      className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
+                        zipcodeError ? "border-red-500" : ""
+                      }`}
                       onChange={handleZipCode}
+                      onBlur={validateZipcode}
+                      onSubmit={validateZipcode}
                     />
+                     {zipcodeError && (
+                      <p className="text-red-500 text-xs italic">
+                        {zipcodeError}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col">
                     <label className="mb-1 font-medium" htmlFor="state">
@@ -258,7 +324,7 @@ const PatientTable = () => {
                     hideForm();
                   }}
                 >
-                  Cancel
+                  Close
                 </button>
               </div>
             </form>
@@ -287,7 +353,7 @@ const PatientTable = () => {
                   <td className="py-3 px-12 w-full text-left text-[11px]">
                     {patient.address.street}, {patient.address.number},{" "}
                     {patient.address.city} {patient.address.zipcode},
-                    {patient.address.state} 
+                    {patient.address.state}
                   </td>
                   <td className="flex justify-center items-center align-middle">
                     <td className="flex justify-center items-center align-middle mt-1 mr-4">

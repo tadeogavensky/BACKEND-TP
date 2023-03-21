@@ -25,6 +25,11 @@ public class AddressService {
         return  addressRepository.findAll();
     }
 
+    public List<Address> findAllNotDeleted(){
+        List<Address> addresses = addressRepository.findAllNotDeleted();
+        System.out.println(addresses);
+        return addresses;
+    }
     public ResponseEntity<Address> findById(Long id){
         Optional<Address> OptAddress =  addressRepository.findById(id);
         return OptAddress.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -33,7 +38,7 @@ public class AddressService {
     public Address save(Address address) {
         return addressRepository.save(address);
     }
-
+    
     public Address update( Address address) {
 
         if(!addressRepository.existsById(address.getId())){

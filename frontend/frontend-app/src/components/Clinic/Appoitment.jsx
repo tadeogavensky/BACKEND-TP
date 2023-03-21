@@ -1,92 +1,88 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import { BsPencil } from "react-icons/bs";
 
 export const Appoitment = () => {
-  let turnos = [
-    {
-      id: 1,
-      patient: {
-        lastName: "Gavensky",
-        firstName: "Tadeo",
-      },
-      dentist: {
-        lastName: "Cachanosky",
-      },
-      date: "20/03/2023",
-    },
-    {
-      id: 2,
-      patient: {
-        lastName: "Chalando",
-        firstName: "Rolando",
-      },
-      dentist: {
-        lastName: "Megatone",
-      },
-      date: "25/03/2023",
-    },
-    {
-      id: 3,
-      patient: {
-        lastName: "Robertone",
-        firstName: "Evaristo",
-      },
-      dentist: {
-        lastName: "Malandro",
-      },
-      date: "13/04/2023",
-    },
-    {
-      id: 4,
-      patient: {
-        lastName: "Sheeran",
-        firstName: "Ed",
-      },
-      dentist: {
-        lastName: "Edwards",
-      },
-      date: "31/03/2023",
-    },
-  ];
+  const [appointments, setAppointments] = useState([]);
+  const [patients, setPatients] = useState([]);
+  const [dentists, setDentists] = useState([]);
 
+  const [selectedDentist, setSelectedDentist] = useState({});
+  const [selectedPatient, setSelectedPatient] = useState({});
+  const [selectedDate, setSelectedDate] = useState({});
+
+  const handleSelectDentist = (event) => {
+
+    console.log('handleSelectDentist :>> ', JSON.parse(event.target.value));
+    setSelectedDentist(JSON.parse(event.target.value));
+  };
+
+  const handleSelectPatient = (event) => {
+    console.log('handleSelectPatient :>> ', JSON.parse(event.target.value));
+
+    setSelectedPatient(JSON.parse(event.target.value));
+  };
+
+  const handleSelectDate = (event) => {
+    setSelectedDate(event.target.value);
+  };
+
+  const fetchPatients = () => {
+    axios
+      .get("http://localhost:8080/api/v1/patient/findAll")
+      .then((res) => {
+        let json = JSON.stringify(res);
+        let data = JSON.parse(json);
+        setPatients(data.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const fetchDentists = () => {
+    axios
+      .get("http://localhost:8080/api/v1/dentist/findAll")
+      .then((res) => {
+        let json = JSON.stringify(res);
+        let data = JSON.parse(json);
+        setDentists(data.data);
+      })
+      .catch((error) => {
+        console.error(error.data.config.data);
+      });
+  };
+
+ useEffect(() => {
+    fetchDentists();
+    fetchPatients();
+  }, []);
+
+ 
   function submitForm(event) {
-    // Prevent the default form submission behavior
     event.preventDefault();
 
-    // Get the form input values
-    const patient = document.getElementById("patientForm").value;
-    const dentist = document.getElementById("dentistForm").value;
-    const date = document.getElementById("dateForm").value;
 
-    // Create the request body
-    const requestBody = {
-      patient,
-      dentist,
-      date,
+    const appointment = {
+      DateTime: selectedDate,
+      dentist: selectedDentist,
+      patient: selectedPatient,
+      assisted: false
     };
 
-    // Send the request to the API endpoint
-    axios
-      .post("https://localhost:8000/turnos", requestBody)
-      .then((response) => {
-        if (response.status === 200) {
-          // Show a success message to the user
-          alert("Turno guardado correctamente");
 
-          // Reset the form
-          document.getElementById("patientForm").value = "";
-          document.getElementById("dentistForm").value = "";
-          document.getElementById("dateForm").value = "";
-        } else {
-          // Show an error message to the user
-          alert("Error al guardar el turno");
+    console.log('appointment :>> ', appointment);
+
+    axios
+      .post("https://localhost:8080/api/v1/appointment/", appointment)
+      .then((res) => {
+        if (res.status === 200) {
+        
         }
       })
       .catch((error) => {
-        // Show an error message to the user
-        alert("Error al guardar el turno");
+        console.log("error :>> ", error);
       });
   }
 
@@ -98,24 +94,7 @@ export const Appoitment = () => {
   const hideForm = () => {
     let form = document.getElementById("form-appointment-container");
     form.style.display = "none";
- 
   };
-
-  let patients = [
-    { firstName: "Juan", lastName: "Pérez" },
-    { firstName: "María", lastName: "García" },
-    { firstName: "Pedro", lastName: "Martínez" },
-    { firstName: "Lucía", lastName: "Hernández" },
-    { firstName: "Luis", lastName: "González" },
-  ];
-
-  let dentists = [
-    { firstName: "Alejandro", lastName: "García" },
-    { firstName: "Luciana", lastName: "Pérez" },
-    { firstName: "Marcelo", lastName: "Fernández" },
-    { firstName: "Laura", lastName: "González" },
-    { firstName: "Diego", lastName: "Rodríguez" },
-  ];
 
   return (
     <div className=" flex flex-col justify-center space-y-6">
@@ -138,12 +117,7 @@ export const Appoitment = () => {
       >
         <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
           <h2 className="text-lg font-medium mb-4">New appointment</h2>
-          <form
-            className="space-y-4"
-            onSubmit={() => {
-              submitForm();
-            }}
-          >
+          <form className="space-y-4" onSubmit={submitForm}>
             <div className="flex flex-col">
               <label className="mb-1 font-medium" for="patient">
                 Patient
@@ -152,11 +126,18 @@ export const Appoitment = () => {
                 id="patient"
                 name="patient"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                value={selectedPatient}
+                onChange={handleSelectPatient}
+                onBlur={handleSelectPatient}
+                onFocus={handleSelectPatient}
+
               >
-                <option value="">Select patient</option>
+                <option selected value="">
+                  Select patient
+                </option>
                 {patients.map((patient) => {
                   return (
-                    <option selected value={patient.lastName}>
+                    <option value={JSON.stringify(patient)}>
                       {patient.lastName}, {patient.firstName}
                     </option>
                   );
@@ -171,13 +152,18 @@ export const Appoitment = () => {
                 id="dentist"
                 name="dentist"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-4"
+                value={selectedDentist}
+                onChange={handleSelectDentist}
+                onBlur={handleSelectDentist}
+                onFocus={handleSelectDentist}
+
               >
                 <option selected value="">
-                  Seleccionar dentist
+                  Select dentist
                 </option>
                 {dentists.map((dentist) => {
                   return (
-                    <option selected value={dentist.lastName}>
+                    <option value={JSON.stringify(dentist)}>
                       Dr. {dentist.lastName}
                     </option>
                   );
@@ -193,6 +179,9 @@ export const Appoitment = () => {
                 name="date"
                 type="date"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                value={selectedDate}
+                onChange={handleSelectDate}
+                onBlur={handleSelectDate}
               />
             </div>
             <div className="flex justify-start">
@@ -209,7 +198,7 @@ export const Appoitment = () => {
                   hideForm();
                 }}
               >
-                Cancel
+                Close
               </button>
             </div>
           </form>
@@ -229,17 +218,18 @@ export const Appoitment = () => {
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
-              {turnos.map((turno) => {
+              {appointments.map((appointment) => {
                 return (
                   <tr className="border-b border-gray-200 hover:bg-gray-100 px-12">
-                    <td className="py-3 px-5 text-left">{turno.id}</td>
+                    <td className="py-3 px-5 text-left">{appointment.id}</td>
                     <td className="py-3 px-4 text-left">
-                      {turno.patient.lastName}, {turno.patient.firstName}
+                      {appointment.patient.lastName},{" "}
+                      {appointment.patient.firstName}
                     </td>
                     <td className="py-3 px-4 text-left">
-                      Dr. {turno.dentist.lastName}
+                      Dr. {appointment.dentist.lastName}
                     </td>
-                    <td className="py-3 px-4 text-left">{turno.date}</td>
+                    <td className="py-3 px-4 text-left">{appointment.date}</td>
                     <td className="flex justify-center items-center align-middle">
                       <td className="flex justify-center items-center align-middle mt-1">
                         <button

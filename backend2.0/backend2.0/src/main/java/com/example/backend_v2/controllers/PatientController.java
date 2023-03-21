@@ -6,6 +6,7 @@ import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.entities.User;
 import com.example.backend_v2.services.AddressService;
 import com.example.backend_v2.services.PatientService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,23 +45,26 @@ public class PatientController {
         return ResponseEntity.ok(patientService.findById(id));
     }
 
-    @PostMapping(path = "/",consumes = "application/json")
+    @PostMapping(path = "/", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody Patient patient) {
-        System.out.println("Patient " +patient.toString());
+        System.out.println("Patient " + patient.toString());
 
         Patient existingPatient = patientService.findByDNI(patient.getDni());
-        Address existingAddress = addressService.findByAddress(patient.getAddress().getStreet(),patient.getAddress().getNumber(),patient.getAddress().getZipcode(),patient.getAddress().getState());
+        Address existingAddress = addressService.findByAddress(patient.getAddress().getStreet(), patient.getAddress().getNumber(), patient.getAddress().getZipcode(), patient.getAddress().getState());
 
         if (existingPatient != null) {
             return ResponseEntity.status(HttpStatus.FOUND).body("Patient already exists!");
-        } else if(existingAddress != null) {
+        } else if (!StringUtils.isNumeric(String.valueOf(patient.getDni()))) {
+            return ResponseEntity.status(HttpStatus.FOUND).body("DNI must be numeric");
+        } else if (existingAddress != null) {
             patient.setAddress(existingAddress);
             return ResponseEntity.ok(patientService.save(patient));
-        }else {
+        } else {
             addressService.save(patient.getAddress());
             return ResponseEntity.ok(patientService.save(patient));
         }
     }
+
 
     @PutMapping(path = "/{id}")
     public ResponseEntity<?> update(@ModelAttribute("patient") Patient patient) {

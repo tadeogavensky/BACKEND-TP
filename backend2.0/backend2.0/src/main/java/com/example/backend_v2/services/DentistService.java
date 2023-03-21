@@ -27,6 +27,12 @@ public class DentistService {
         return  dentistRepository.findAll();
     }
 
+    public List<Dentist> findAllNotDeleted(){
+        List<Dentist> dentists = dentistRepository.findAllNotDeleted();
+        System.out.println(dentists);
+        return dentists;
+    }
+
     public ResponseEntity<Dentist> findById(Long id){
         Optional<Dentist> OptDentist =  dentistRepository.findById(id);
         return OptDentist.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());

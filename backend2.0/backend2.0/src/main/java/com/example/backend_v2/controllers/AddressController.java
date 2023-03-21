@@ -22,15 +22,8 @@ public class AddressController {
 
 
     @PostMapping()
-    public String create(@RequestBody Address address, @RequestHeader HttpHeaders headers) {
-        addressService.save(address);
-        return "redirect:/savesuccess-page";
-    }
-
-    @GetMapping("/updateAddressForm")
-    public String showUpdateAddressForm(Model model) {
-        model.addAttribute("Address", new Address());
-        return "updateAddressForm";
+    public ResponseEntity<Address> save(@RequestBody Address address) {
+        return ResponseEntity.ok(addressService.save(address));
     }
 
     @PutMapping(path = "/{id}")

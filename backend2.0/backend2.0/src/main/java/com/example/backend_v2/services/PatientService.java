@@ -27,10 +27,17 @@ public class PatientService {
         return  patients;
     }
 
+    public List<Patient> findAllNotDeleted(){
+        List<Patient> patients = patientRepository.findAllNotDeleted();
+        System.out.println(patients);
+        return patients;
+    }
+
     public Optional<Patient> findById(Long id){
         return  patientRepository.findById(id);
-
     }
+
+
     public Patient findByDNI(int dni){
         return patientRepository.findByDNI(dni);
     }

@@ -1,13 +1,16 @@
 package com.example.backend_v2.controllers;
 
+import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.entities.Appointment;
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.AppointmentService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +26,7 @@ public class AppointmentController {
     AppointmentService appointmentService;
 
     private final Logger log = LoggerFactory.getLogger(AppointmentController.class);
-
-
+    
 
     @GetMapping(path = "/findAll")
     public List<Appointment> findAll() {
@@ -37,10 +39,10 @@ public class AppointmentController {
     }
 
 
-    @PostMapping()
-    public String create(@ModelAttribute("appointment") Appointment appointment, @RequestHeader HttpHeaders headers) {
-        appointmentService.save(appointment);
-        return "redirect:/savesuccess-page";
+    @PostMapping(path = "/", consumes = "application/json")
+    public ResponseEntity<?> save(@RequestBody Appointment appointment) {
+        System.out.println("appointment " + appointment.toString());
+            return ResponseEntity.ok(appointmentService.save(appointment));
 
     }
 
