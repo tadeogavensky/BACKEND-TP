@@ -28,7 +28,7 @@ export const DentistTable = () => {
   
   const fetchDentists = () => {
     axios
-      .get("http://localhost:8080/api/v1/dentist/findAll")
+      .get("http://localhost:8090/api/v1/dentist/findAll")
       .then((response) => {
         let json = JSON.stringify(response);
         let data = JSON.parse(json);
@@ -82,7 +82,7 @@ export const DentistTable = () => {
     }else{
       console.log(dentist);
       axios
-        .post("http://localhost:8080/api/v1/dentist/", dentist)
+        .post("http://localhost:8090/api/v1/dentist/", dentist)
         .then((res) => {
           if (res.status === 200) {
             Toast.fire({

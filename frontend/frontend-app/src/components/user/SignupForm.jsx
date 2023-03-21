@@ -59,15 +59,18 @@ export const SignupForm = () => {
     };
 
     axios
-      .post("http://localhost:8080/api/v1/user/signup", user)
+      .post("http://localhost:8090/api/v1/user/signup", user)
       .then((res) => {
         if (res.request.status == 200) {
-          console.log("res :>> ", res.request.status);
+          console.log("res from userSingup :>> ", res);
           Toast.fire({
             icon: "success",
             title: "User created successfully",
           });
         }
+
+        sessionStorage.setItem('token', res.data.token);
+       
         
       })
       .catch((error) => {

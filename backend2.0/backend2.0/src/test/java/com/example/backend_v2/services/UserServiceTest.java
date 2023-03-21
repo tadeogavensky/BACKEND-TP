@@ -14,17 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class UserServiceTest {
 
-    private static UserService userService = new UserService();
-
-    @Test
-    public void cargarDataSet() {
-        User user1 = new User("USUARIO1","12345");
-        User user2 = new User("USUARIO2","12345");
-
-        userService.signup(user1);
-        userService.signup(user2);
 
 
-    }
 
 }

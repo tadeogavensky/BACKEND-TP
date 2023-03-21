@@ -26,7 +26,7 @@ public class AppointmentController {
     AppointmentService appointmentService;
 
     private final Logger log = LoggerFactory.getLogger(AppointmentController.class);
-    
+
 
     @GetMapping(path = "/findAll")
     public List<Appointment> findAll() {
@@ -41,9 +41,8 @@ public class AppointmentController {
 
     @PostMapping(path = "/", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody Appointment appointment) {
-        System.out.println("appointment " + appointment.toString());
+        System.out.println("new appointment " + appointment.toString());
             return ResponseEntity.ok(appointmentService.save(appointment));
-
     }
 
 

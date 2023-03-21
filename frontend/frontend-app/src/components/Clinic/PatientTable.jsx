@@ -44,7 +44,7 @@ const PatientTable = () => {
 
   const fetchPatients = () => {
     axios
-      .get("http://localhost:8080/api/v1/patient/findAll")
+      .get("http://localhost:8090/api/v1/patient/findAll")
       .then((response) => {
         let json = JSON.stringify(response);
         let data = JSON.parse(json);
@@ -116,10 +116,10 @@ const PatientTable = () => {
     } else {
       console.log(patient);
       axios
-        .post("http://localhost:8080/api/v1/patient/", patient)
+        .post("http://localhost:8090/api/v1/patient/", patient)
         .then((res) => {
           if (res.status === 200) {
-            console.log("res :>> ", res);
+            console.log("res :>> ", res.data);
             Toast.fire({
               icon: "success",
               title: "Patient created successfully",

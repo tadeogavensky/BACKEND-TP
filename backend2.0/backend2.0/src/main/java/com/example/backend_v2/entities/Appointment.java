@@ -15,11 +15,11 @@ public class Appointment {
     @Column (name="date_time")
     private Date DateTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dentist_id")
     private Dentist dentist;
 
@@ -27,9 +27,9 @@ public class Appointment {
     private boolean assisted;
 
     public Appointment(Date dateTime, Patient patient, Dentist dentist, boolean assisted) {
-        DateTime = dateTime;
         this.patient = patient;
         this.dentist = dentist;
+        this.DateTime = dateTime;
         this.assisted = assisted;
     }
 

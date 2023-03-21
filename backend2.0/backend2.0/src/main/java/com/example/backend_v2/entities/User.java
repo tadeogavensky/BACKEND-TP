@@ -20,6 +20,7 @@ public class User {
     private boolean role;
     //1 para ADMIN, 0 para USER
 
+
     @Column (name = "deleted", nullable = false)
     private boolean deleted;
 
@@ -71,6 +72,10 @@ public class User {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
+
+
+
 
     @Override
     public String toString() {

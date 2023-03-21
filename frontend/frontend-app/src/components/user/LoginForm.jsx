@@ -40,14 +40,18 @@ export const LoginForm = () => {
     }
 
     axios
-      .post("http://localhost:8080/api/v1/user/login", { username, password })
+      .post("http://localhost:8090/api/v1/user/login", { username, password })
       .then((res) => {
         if (res.request.status == 200) {
-          console.log("res :>> ", res.request.status);
+          console.log('res from userLogin :>> ', res);
           Toast.fire({
             icon: "success",
             title: "Signed in successfully",
           });
+
+          sessionStorage.setItem('token', res.data.token);
+
+
         }
       })
       .catch((error) => {

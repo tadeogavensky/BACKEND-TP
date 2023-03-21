@@ -8,19 +8,18 @@ export const Appoitment = () => {
   const [patients, setPatients] = useState([]);
   const [dentists, setDentists] = useState([]);
 
-  const [selectedDentist, setSelectedDentist] = useState({});
-  const [selectedPatient, setSelectedPatient] = useState({});
-  const [selectedDate, setSelectedDate] = useState({});
+  const [dentist, setSelectedDentist] = useState({});
+  const [patient, setSelectedPatient] = useState({});
+  const [DateTime, setSelectedDate] = useState();
+  const [appointmentBody, setAppointmentBody] = useState({});
 
   const handleSelectDentist = (event) => {
-
-    console.log('handleSelectDentist :>> ', JSON.parse(event.target.value));
+    console.log("handleSelectDentist :>> ", JSON.parse(event.target.value));
     setSelectedDentist(JSON.parse(event.target.value));
   };
 
   const handleSelectPatient = (event) => {
-    console.log('handleSelectPatient :>> ', JSON.parse(event.target.value));
-
+    console.log("handleSelectPatient :>> ", JSON.parse(event.target.value));
     setSelectedPatient(JSON.parse(event.target.value));
   };
 
@@ -28,13 +27,28 @@ export const Appoitment = () => {
     setSelectedDate(event.target.value);
   };
 
+
+
+  const handleForm = (event) => {
+    event.preventDefault()
+ 
+    setAppointmentBody({
+      patient,
+      dentist,
+      DateTime,
+      assisted:false
+     })
+  };
+
   const fetchPatients = () => {
     axios
-      .get("http://localhost:8080/api/v1/patient/findAll")
+      .get("http://localhost:8090/api/v1/patient/findAll")
       .then((res) => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
         setPatients(data.data);
+        console.log('patients :>> ', patients);
+
       })
       .catch((error) => {
         console.error(error);
@@ -43,42 +57,51 @@ export const Appoitment = () => {
 
   const fetchDentists = () => {
     axios
-      .get("http://localhost:8080/api/v1/dentist/findAll")
+      .get("http://localhost:8090/api/v1/dentist/findAll")
       .then((res) => {
+       
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
         setDentists(data.data);
+        console.log('dentists :>> ', dentists);
       })
       .catch((error) => {
         console.error(error.data.config.data);
       });
   };
 
- useEffect(() => {
+  const fetchAppointments = () => {
+    axios
+      .get("http://localhost:8090/api/v1/appointment/findAll")
+      .then((res) => {
+        let json = JSON.stringify(res);
+        let data = JSON.parse(json);
+        console.log('appointments :>> ', data.data);
+
+         setAppointments(data.data)
+     
+      })
+      .catch((error) => {
+       /*  console.error(error.data.config); */
+      });
+  };
+
+  useEffect(() => {
     fetchDentists();
     fetchPatients();
+    fetchAppointments();
   }, []);
 
- 
   function submitForm(event) {
     event.preventDefault();
 
 
-    const appointment = {
-      DateTime: selectedDate,
-      dentist: selectedDentist,
-      patient: selectedPatient,
-      assisted: false
-    };
-
-
-    console.log('appointment :>> ', appointment);
+    console.log("appointment :>> ", appointmentBody);
 
     axios
-      .post("https://localhost:8080/api/v1/appointment/", appointment)
+      .post("http://localhost:8090/api/v1/appointment/", appointmentBody)
       .then((res) => {
         if (res.status === 200) {
-        
         }
       })
       .catch((error) => {
@@ -117,7 +140,7 @@ export const Appoitment = () => {
       >
         <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
           <h2 className="text-lg font-medium mb-4">New appointment</h2>
-          <form className="space-y-4" onSubmit={submitForm}>
+          <form className="space-y-4" onSubmit={submitForm} onChange={handleForm} id="appointmentForm">
             <div className="flex flex-col">
               <label className="mb-1 font-medium" for="patient">
                 Patient
@@ -126,11 +149,10 @@ export const Appoitment = () => {
                 id="patient"
                 name="patient"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-3"
-                value={selectedPatient}
+                value={patient}
                 onChange={handleSelectPatient}
                 onBlur={handleSelectPatient}
                 onFocus={handleSelectPatient}
-
               >
                 <option selected value="">
                   Select patient
@@ -152,11 +174,10 @@ export const Appoitment = () => {
                 id="dentist"
                 name="dentist"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-4"
-                value={selectedDentist}
+                value={dentist}
                 onChange={handleSelectDentist}
                 onBlur={handleSelectDentist}
                 onFocus={handleSelectDentist}
-
               >
                 <option selected value="">
                   Select dentist
@@ -179,7 +200,7 @@ export const Appoitment = () => {
                 name="date"
                 type="date"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-3"
-                value={selectedDate}
+                value={DateTime}
                 onChange={handleSelectDate}
                 onBlur={handleSelectDate}
               />
@@ -214,11 +235,12 @@ export const Appoitment = () => {
                 <th className="py-3 px-4 text-left">Patient</th>
                 <th className="py-3 px-4 text-left">Dentist</th>
                 <th className="py-3 px-4 text-left">Date</th>
+                <th className="py-3 px-4 text-left">Assisted</th>
                 <th className="py-3 px-4">Edit</th>
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
-              {appointments.map((appointment) => {
+            {/*   {appointments.map((appointment) => {
                 return (
                   <tr className="border-b border-gray-200 hover:bg-gray-100 px-12">
                     <td className="py-3 px-5 text-left">{appointment.id}</td>
@@ -230,6 +252,7 @@ export const Appoitment = () => {
                       Dr. {appointment.dentist.lastName}
                     </td>
                     <td className="py-3 px-4 text-left">{appointment.date}</td>
+                    <td className="py-3 px-4 text-left">{appointment.assisted}</td>
                     <td className="flex justify-center items-center align-middle">
                       <td className="flex justify-center items-center align-middle mt-1">
                         <button
@@ -242,7 +265,7 @@ export const Appoitment = () => {
                     </td>
                   </tr>
                 );
-              })}
+              })} */}
             </tbody>
           </table>
         </div>
