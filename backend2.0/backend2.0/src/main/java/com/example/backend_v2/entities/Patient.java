@@ -19,10 +19,10 @@ public class Patient {
   /*  @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")*/
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
     private Address address;
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<Appointment> appointments;
+
 
 
     @Column(name = "dni", nullable = false)
@@ -32,12 +32,11 @@ public class Patient {
     private boolean deleted;
 
 
-    public Patient(String lastName, String firstname,Integer dni, Address address,List<Appointment> appointments, boolean deleted) {
+    public Patient(String lastName, String firstname,Integer dni, Address address, boolean deleted) {
         this.lastName = lastName;
         this.firstName = firstname;
         this.dni = dni;
         this.address = address;
-        this.appointments = appointments;
         this.deleted = false;
     }
 
@@ -86,13 +85,6 @@ public class Patient {
         this.deleted = deleted;
     }
 
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
-    }
 
     public boolean isDeleted() {
         return deleted;
@@ -107,7 +99,6 @@ public class Patient {
                 ", firstName='" + firstName + '\'' +
                 ", dni=" + dni +
                 ", address=" + address +
-                ", appointments=" + appointments +
                 ", deleted=" + deleted +
                 '}';
     }

@@ -5,6 +5,8 @@ import com.example.backend_v2.entities.Appointment;
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.AppointmentService;
+import com.example.backend_v2.services.DentistService;
+import com.example.backend_v2.services.PatientService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,12 @@ public class AppointmentController {
     @Autowired
     AppointmentService appointmentService;
 
+    @Autowired
+    DentistService dentistService;
+
+    @Autowired
+    PatientService patientService;
+
     private final Logger log = LoggerFactory.getLogger(AppointmentController.class);
 
 
@@ -41,9 +49,10 @@ public class AppointmentController {
 
     @PostMapping(path = "/", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody Appointment appointment) {
-        System.out.println("new appointment " + appointment.toString());
-            appointment.setPatient(appointment.getPatient());
-        appointment.setDentist(appointment.getDentist());
+
+
+        System.out.println("new appointment " + appointment);
+
 
         return ResponseEntity.ok(appointmentService.save(appointment));
     }

@@ -23,20 +23,27 @@ public class Dentist {
     private int registrationNumber;
 
 
-    @OneToMany(mappedBy = "dentist", cascade = CascadeType.ALL)
-    private List<Appointment> appointments;
+
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
 
+    @Override
+    public String toString() {
+        return "Dentist{" +
+                "id=" + id +
+                ", lastName='" + lastName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", registrationNumber=" + registrationNumber +
+                ", deleted=" + deleted +
+                '}';
+    }
 
-
-    public Dentist(String lastName, String firstName, int registrationNumber, List<Appointment> appointments, boolean deleted) {
+    public Dentist(String lastName, String firstName, int registrationNumber, boolean deleted) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.registrationNumber = registrationNumber;
-        this.appointments = appointments;
         this.deleted = false;
     }
     public Dentist(){}
@@ -62,13 +69,7 @@ public class Dentist {
         this.firstName = firstname;
     }
 
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
 
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
-    }
     public int getRegistrationNumber() {
         return registrationNumber;
     }

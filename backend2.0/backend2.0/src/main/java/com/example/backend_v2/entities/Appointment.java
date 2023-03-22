@@ -1,9 +1,12 @@
 package com.example.backend_v2.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 
-import java.util.Date;
+import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "appoitments")
@@ -12,13 +15,17 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (name="date_time")
-    private Date DateTime;
+    @Column (name="date")
+    private LocalDate date;
 
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dentist_id")
     private Dentist dentist;
@@ -26,10 +33,10 @@ public class Appointment {
     @Column(name = "assisted")
     private boolean assisted;
 
-    public Appointment(Date dateTime, Patient patient, Dentist dentist, boolean assisted) {
+    public Appointment(LocalDate date, Patient patient, Dentist dentist, boolean assisted) {
         this.patient = patient;
         this.dentist = dentist;
-        this.DateTime = dateTime;
+        this.date = date;
         this.assisted = assisted;
     }
 
@@ -40,12 +47,12 @@ public class Appointment {
         return id;
     }
 
-    public Date getDateTime() {
-        return DateTime;
+    public LocalDate getDateTime() {
+        return date;
     }
 
-    public void setDateTime(Date dateTime) {
-        DateTime = dateTime;
+    public void setDateTime(LocalDate date) {
+        date = date;
     }
 
     public Dentist getDentist() {
@@ -76,7 +83,7 @@ public class Appointment {
     public String toString() {
         return "Appointment{" +
                 "id=" + id +
-                ", DateTime=" + DateTime +
+                ", date=" + date +
                 ", dentist=" + dentist +
                 ", patient=" + patient +
                 ", assisted=" + assisted +

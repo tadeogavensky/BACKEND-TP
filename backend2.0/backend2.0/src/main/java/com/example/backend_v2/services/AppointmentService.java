@@ -26,7 +26,9 @@ public class AppointmentService {
     private final Logger log = LoggerFactory.getLogger(AppointmentService.class);
 
     public List<Appointment> findAll(){
-        return  appointmentRepository.findAll();
+        List<Appointment> appointments = appointmentRepository.findAll();
+        System.out.println(appointments);
+        return  appointments;
     }
 
     public ResponseEntity<Appointment> findById(Long id){

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import { BsPencil } from "react-icons/bs";
+import Swal from "sweetalert2";
 
 export const Appoitment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -10,11 +11,11 @@ export const Appoitment = () => {
 
   const [dentist, setSelectedDentist] = useState({});
   const [patient, setSelectedPatient] = useState({});
-  const [DateTime, setSelectedDate] = useState();
+  const [date, setSelectedDate] = useState();
   const [appointmentBody, setAppointmentBody] = useState({});
 
   const handleSelectDentist = (event) => {
-    console.log("handleSelectDentist :>> ", JSON.parse(event.target.value));
+   /*  console.log("handleSelectDentist :>> ", JSON.parse(event.target.value)); */
     setSelectedDentist(JSON.parse(event.target.value));
   };
 
@@ -24,6 +25,7 @@ export const Appoitment = () => {
   };
 
   const handleSelectDate = (event) => {
+    console.log('DATE :>> ', date);
     setSelectedDate(event.target.value);
   };
 
@@ -35,7 +37,7 @@ export const Appoitment = () => {
     setAppointmentBody({
       patient,
       dentist,
-      DateTime,
+      date,
       assisted:false
      })
   };
@@ -47,7 +49,7 @@ export const Appoitment = () => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
         setPatients(data.data);
-        console.log('patients :>> ', patients);
+      /*   console.log('patients :>> ', patients); */
 
       })
       .catch((error) => {
@@ -63,7 +65,7 @@ export const Appoitment = () => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
         setDentists(data.data);
-        console.log('dentists :>> ', dentists);
+    /*     console.log('dentists :>> ', dentists); */
       })
       .catch((error) => {
         console.error(error.data.config.data);
@@ -76,9 +78,9 @@ export const Appoitment = () => {
       .then((res) => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
-        console.log('appointments :>> ', data.data);
 
          setAppointments(data.data)
+       console.log('Appointments FROM FETCH :>> ', data.data);
      
       })
       .catch((error) => {
@@ -95,6 +97,18 @@ export const Appoitment = () => {
   function submitForm(event) {
     event.preventDefault();
 
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+
 
     console.log("appointment :>> ", appointmentBody);
 
@@ -102,10 +116,17 @@ export const Appoitment = () => {
       .post("http://localhost:8090/api/v1/appointment/", appointmentBody)
       .then((res) => {
         if (res.status === 200) {
+          Toast.fire({
+            icon: "success",
+            title: "Dentist created successfully",
+          });
         }
       })
       .catch((error) => {
-        console.log("error :>> ", error);
+        Toast.fire({
+          icon: "error",
+          title: error.response.data,
+        });
       });
   }
 
@@ -200,9 +221,11 @@ export const Appoitment = () => {
                 name="date"
                 type="date"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-3"
-                value={DateTime}
+                value={date}
                 onChange={handleSelectDate}
                 onBlur={handleSelectDate}
+                onFocus={handleSelectDate}
+
               />
             </div>
             <div className="flex justify-start">
@@ -240,7 +263,7 @@ export const Appoitment = () => {
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
-            {/*   {appointments.map((appointment) => {
+              {appointments.map((appointment) => {
                 return (
                   <tr className="border-b border-gray-200 hover:bg-gray-100 px-12">
                     <td className="py-3 px-5 text-left">{appointment.id}</td>
@@ -265,7 +288,7 @@ export const Appoitment = () => {
                     </td>
                   </tr>
                 );
-              })} */}
+              })}
             </tbody>
           </table>
         </div>
