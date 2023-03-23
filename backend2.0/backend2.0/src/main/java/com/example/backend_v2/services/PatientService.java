@@ -22,15 +22,13 @@ public class PatientService {
     private final Logger log = LoggerFactory.getLogger(PatientService.class);
 
     public List<Patient> findAll(){
-        List<Patient> patients = patientRepository.findAll();
-        System.out.println(patients);
-        return  patients;
+
+        return patientRepository.findAll();
     }
 
     public List<Patient> findAllNotDeleted(){
-        List<Patient> patients = patientRepository.findAllNotDeleted();
-        System.out.println(patients);
-        return patients;
+
+        return patientRepository.findAllNotDeleted();
     }
 
     public Optional<Patient> findById(Long id){

@@ -26,15 +26,10 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     public User login(String username, String password) {
-        System.out.println("usuario " +username);
-        System.out.println("password " + password);
         User userFound = userRepository.findByUsernameAndPassword(username, password);
         if (userFound == null) {
             log.warn("User not found or invalid password");
-        }else{
-            System.out.println("Usuario encontrado "+userFound);
         }
-
         return userFound;
     }
 

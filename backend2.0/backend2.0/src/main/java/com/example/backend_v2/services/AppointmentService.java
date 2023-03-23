@@ -1,16 +1,13 @@
 package com.example.backend_v2.services;
 
 import com.example.backend_v2.entities.Appointment;
-import com.example.backend_v2.entities.Appointment;
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
-import com.example.backend_v2.repositories.AppointmentRepository;
 import com.example.backend_v2.repositories.AppointmentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,13 +24,12 @@ public class AppointmentService {
 
     public List<Appointment> findAll(){
         List<Appointment> appointments = appointmentRepository.findAll();
-        System.out.println(appointments);
         return  appointments;
     }
 
-    public ResponseEntity<Appointment> findById(Long id){
-        Optional<Appointment> OptAppointment =  appointmentRepository.findById(id);
-        return OptAppointment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public Optional<Appointment> findById(Long id){
+        Optional<Appointment> appointment =  appointmentRepository.findById(id);
+        return appointment;
     }
 
     public Appointment save(Appointment appointment) {

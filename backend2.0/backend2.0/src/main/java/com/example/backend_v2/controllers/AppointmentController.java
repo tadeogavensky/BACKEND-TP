@@ -1,23 +1,23 @@
 package com.example.backend_v2.controllers;
 
-import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.entities.Appointment;
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.AppointmentService;
 import com.example.backend_v2.services.DentistService;
 import com.example.backend_v2.services.PatientService;
-import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -42,7 +42,7 @@ public class AppointmentController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Appointment> findById(@PathVariable("id") Long id) {
+    public Optional<Appointment> findById(@PathVariable("id") Long id) {
         return appointmentService.findById(id);
     }
 
@@ -50,11 +50,28 @@ public class AppointmentController {
     @PostMapping(path = "/", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody Appointment appointment) {
 
+        System.out.println(appointment.getDateTime());
+        Optional<Dentist> dentist = dentistService.findById(appointment.getDentist().getId());
+        Optional<Patient> patient = patientService.findById(appointment.getPatient().getId());
 
-        System.out.println("new appointment " + appointment);
+        if (patient.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
+        }
+
+        if (dentist.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentist not found");
+        }
 
 
-        return ResponseEntity.ok(appointmentService.save(appointment));
+
+
+        appointment.setDentist(dentist.get());
+        appointment.setPatient(patient.get());
+
+        Appointment appointment1 = appointmentService.save(appointment);
+        System.out.println("TURNO RECIEN CREADO " + appointment1);
+        return ResponseEntity.ok(appointmentService.findById(appointment.getId()));
+
     }
 
 

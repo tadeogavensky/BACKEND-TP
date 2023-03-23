@@ -23,8 +23,6 @@ public class Dentist {
     private int registrationNumber;
 
 
-
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 

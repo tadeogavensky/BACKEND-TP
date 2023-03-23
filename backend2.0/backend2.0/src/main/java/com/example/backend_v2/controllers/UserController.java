@@ -53,8 +53,6 @@ public class UserController {
 
         String retrievedToken = jsonMap.get("token");
 
-        System.out.println("token? "+ retrievedToken);
-
         return ResponseEntity.ok(loggedUser.getUser()).getBody();
     }
     @PostMapping(path = "/login", consumes = "application/json")
@@ -69,8 +67,6 @@ public class UserController {
 
             loggedUser.setUser(loginUser);
             loggedUser.setToken(token);
-            System.out.println("token of logged in user " + loggedUser.getToken());
-            System.out.println("user of logged in user " + loggedUser.getUser().toString());
 
             return ResponseEntity.ok(loggedUser);
         }
@@ -84,12 +80,9 @@ public class UserController {
         if(existingUser != null){
             return ResponseEntity.status(HttpStatus.FOUND).body("User already exists!");
         }else{
-            ResponseEntity.ok(userService.signup(user));
-            loggedUser.setUser(user);
-            return login(loggedUser.getUser());
+            userService.signup(user);
 
+            return ResponseEntity.ok(login(user));
         }
-
     }
-
 }

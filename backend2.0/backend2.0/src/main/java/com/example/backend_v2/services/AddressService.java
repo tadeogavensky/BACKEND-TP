@@ -26,9 +26,8 @@ public class AddressService {
     }
 
     public List<Address> findAllNotDeleted(){
-        List<Address> addresses = addressRepository.findAllNotDeleted();
-        System.out.println(addresses);
-        return addresses;
+
+        return addressRepository.findAllNotDeleted();
     }
     public ResponseEntity<Address> findById(Long id){
         Optional<Address> OptAddress =  addressRepository.findById(id);

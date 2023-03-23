@@ -47,7 +47,7 @@ public class PatientController {
 
     @PostMapping(path = "/", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody Patient patient) {
-        System.out.println("Patient " + patient.toString());
+
 
         Patient existingPatient = patientService.findByDNI(patient.getDni());
         Address existingAddress = addressService.findByAddress(patient.getAddress().getStreet(), patient.getAddress().getNumber(), patient.getAddress().getZipcode(), patient.getAddress().getState());
@@ -61,7 +61,9 @@ public class PatientController {
             return ResponseEntity.ok(patientService.save(patient));
         } else {
             addressService.save(patient.getAddress());
-            return ResponseEntity.ok(patientService.save(patient));
+            patientService.save(patient);
+            
+            return ResponseEntity.ok(patientService.findById(patient.getId()));
         }
     }
 

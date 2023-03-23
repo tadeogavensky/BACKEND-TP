@@ -3,7 +3,6 @@ package com.example.backend_v2.services;
 
 
 import com.example.backend_v2.entities.Dentist;
-import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.repositories.DentistRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +27,12 @@ public class DentistService {
     }
 
     public List<Dentist> findAllNotDeleted(){
-        List<Dentist> dentists = dentistRepository.findAllNotDeleted();
-        System.out.println(dentists);
-        return dentists;
+
+        return dentistRepository.findAllNotDeleted();
     }
 
-    public ResponseEntity<Dentist> findById(Long id){
-        Optional<Dentist> OptDentist =  dentistRepository.findById(id);
-        return OptDentist.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public Optional<Dentist> findById(Long id){
+        return dentistRepository.findById(id);
     }
 
 

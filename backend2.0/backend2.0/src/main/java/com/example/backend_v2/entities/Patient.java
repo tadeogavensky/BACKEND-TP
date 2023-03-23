@@ -16,14 +16,10 @@ public class Patient {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-  /*  @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id")*/
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
-
-
 
     @Column(name = "dni", nullable = false)
     private Integer dni;

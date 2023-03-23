@@ -1,11 +1,11 @@
 package com.example.backend_v2.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Cascade;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @Entity
@@ -15,29 +15,26 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (name="date")
-    private LocalDate date;
+    @Column (name="date_time")
+    private LocalDateTime date_time;
 
-
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id")
-    private Patient patient;
-
-
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    /*    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})*/
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dentist_id")
     private Dentist dentist;
+  /*  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})*/
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 
     @Column(name = "assisted")
     private boolean assisted;
 
-    public Appointment(LocalDate date, Patient patient, Dentist dentist, boolean assisted) {
+    public Appointment(LocalDateTime date_time, Patient patient, Dentist dentist, boolean assisted) {
         this.patient = patient;
         this.dentist = dentist;
-        this.date = date;
-        this.assisted = assisted;
+        this.date_time = date_time;
+        this.assisted = false;
     }
 
     public Appointment() {
@@ -47,12 +44,12 @@ public class Appointment {
         return id;
     }
 
-    public LocalDate getDateTime() {
-        return date;
+    public LocalDateTime getDateTime() {
+        return date_time;
     }
 
-    public void setDateTime(LocalDate date) {
-        date = date;
+    public void setDateTime(LocalDateTime date_time) {
+        date_time = date_time;
     }
 
     public Dentist getDentist() {
@@ -83,7 +80,7 @@ public class Appointment {
     public String toString() {
         return "Appointment{" +
                 "id=" + id +
-                ", date=" + date +
+                ", date_time=" + date_time +
                 ", dentist=" + dentist +
                 ", patient=" + patient +
                 ", assisted=" + assisted +

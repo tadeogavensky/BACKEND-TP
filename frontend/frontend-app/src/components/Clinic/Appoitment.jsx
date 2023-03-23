@@ -11,35 +11,20 @@ export const Appoitment = () => {
 
   const [dentist, setSelectedDentist] = useState({});
   const [patient, setSelectedPatient] = useState({});
-  const [date, setSelectedDate] = useState();
+  const [date, setSelectedDateTime] = useState();
   const [appointmentBody, setAppointmentBody] = useState({});
 
   const handleSelectDentist = (event) => {
-   /*  console.log("handleSelectDentist :>> ", JSON.parse(event.target.value)); */
+    /*  console.log("handleSelectDentist :>> ", JSON.parse(event.target.value)); */
     setSelectedDentist(JSON.parse(event.target.value));
   };
 
   const handleSelectPatient = (event) => {
-    console.log("handleSelectPatient :>> ", JSON.parse(event.target.value));
     setSelectedPatient(JSON.parse(event.target.value));
   };
 
   const handleSelectDate = (event) => {
-    console.log('DATE :>> ', date);
-    setSelectedDate(event.target.value);
-  };
-
-
-
-  const handleForm = (event) => {
-    event.preventDefault()
- 
-    setAppointmentBody({
-      patient,
-      dentist,
-      date,
-      assisted:false
-     })
+    setSelectedDateTime(event.target.value);
   };
 
   const fetchPatients = () => {
@@ -49,8 +34,6 @@ export const Appoitment = () => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
         setPatients(data.data);
-      /*   console.log('patients :>> ', patients); */
-
       })
       .catch((error) => {
         console.error(error);
@@ -61,11 +44,10 @@ export const Appoitment = () => {
     axios
       .get("http://localhost:8090/api/v1/dentist/findAll")
       .then((res) => {
-       
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
         setDentists(data.data);
-    /*     console.log('dentists :>> ', dentists); */
+        /*     console.log('dentists :>> ', dentists); */
       })
       .catch((error) => {
         console.error(error.data.config.data);
@@ -79,12 +61,10 @@ export const Appoitment = () => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
 
-         setAppointments(data.data)
-       console.log('Appointments FROM FETCH :>> ', data.data);
-     
+        setAppointments(data.data);
       })
       .catch((error) => {
-       /*  console.error(error.data.config); */
+        /*  console.error(error.data.config); */
       });
   };
 
@@ -109,25 +89,51 @@ export const Appoitment = () => {
       },
     });
 
+    console.log("date :>> ", date);
+    console.log("patient :>> ", patient);
+    console.log("dentist :>> ", dentist);
 
-    console.log("appointment :>> ", appointmentBody);
+    setAppointmentBody({
+      patient,
+      dentist,
+      date,
+      assisted: false,
+    });
 
-    axios
-      .post("http://localhost:8090/api/v1/appointment/", appointmentBody)
-      .then((res) => {
-        if (res.status === 200) {
-          Toast.fire({
-            icon: "success",
-            title: "Dentist created successfully",
-          });
-        }
-      })
-      .catch((error) => {
-        Toast.fire({
-          icon: "error",
-          title: error.response.data,
-        });
+    if (patient == {}) {
+      Toast.fire({
+        icon: "error",
+        title: "Please select a patient",
       });
+    } else if (dentist == {}) {
+      Toast.fire({
+        icon: "error",
+        title: "Please select a dentist",
+      });
+    } else if (date == "") {
+      Toast.fire({
+        icon: "error",
+        title: "Please select a date",
+      });
+    } else {
+      axios
+        .post("http://localhost:8090/api/v1/appointment/", appointmentBody)
+        .then((res) => {
+          if (res.status === 200) {
+            Toast.fire({
+              icon: "success",
+              title: "Appointment created successfully",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+          Toast.fire({
+            icon: "error",
+            title: error.response.data,
+          });
+        });
+    }
   }
 
   const showForm = () => {
@@ -161,7 +167,11 @@ export const Appoitment = () => {
       >
         <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
           <h2 className="text-lg font-medium mb-4">New appointment</h2>
-          <form className="space-y-4" onSubmit={submitForm} onChange={handleForm} id="appointmentForm">
+          <form
+            className="space-y-4"
+            onSubmit={submitForm}
+            id="appointmentForm"
+          >
             <div className="flex flex-col">
               <label className="mb-1 font-medium" for="patient">
                 Patient
@@ -219,13 +229,12 @@ export const Appoitment = () => {
               <input
                 id="date"
                 name="date"
-                type="date"
+                type="datetime-local"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                 value={date}
+                onSubmit={handleSelectDate}
                 onChange={handleSelectDate}
                 onBlur={handleSelectDate}
-                onFocus={handleSelectDate}
-
               />
             </div>
             <div className="flex justify-start">
@@ -275,7 +284,9 @@ export const Appoitment = () => {
                       Dr. {appointment.dentist.lastName}
                     </td>
                     <td className="py-3 px-4 text-left">{appointment.date}</td>
-                    <td className="py-3 px-4 text-left">{appointment.assisted}</td>
+                    <td className="py-3 px-4 text-left">
+                      {appointment.assisted}
+                    </td>
                     <td className="flex justify-center items-center align-middle">
                       <td className="flex justify-center items-center align-middle mt-1">
                         <button

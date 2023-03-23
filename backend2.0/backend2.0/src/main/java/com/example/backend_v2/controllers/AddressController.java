@@ -22,8 +22,10 @@ public class AddressController {
 
 
     @PostMapping()
-    public ResponseEntity<Address> save(@RequestBody Address address) {
-        return ResponseEntity.ok(addressService.save(address));
+    public ResponseEntity<?> save(@RequestBody Address address) {
+        addressService.save(address);
+        return ResponseEntity.ok(addressService.findById(address.getId()));
+
     }
 
     @PutMapping(path = "/{id}")

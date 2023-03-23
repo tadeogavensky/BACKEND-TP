@@ -1,18 +1,15 @@
 package com.example.backend_v2.controllers;
 
 
-import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.entities.Dentist;
-import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.DentistService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -28,7 +25,7 @@ public class DentistController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Dentist> findById(@PathVariable("id") Long id) {
+    public Optional<Dentist> findById(@PathVariable("id") Long id) {
         return dentistService.findById(id);
     }
 
@@ -42,12 +39,15 @@ public class DentistController {
         }else if(existingDentistByRN != null){
             return ResponseEntity.status(HttpStatus.FOUND).body("Dentist already exists!");
         }else{
-            return ResponseEntity.ok(dentistService.save(dentist));
+            dentistService.save(dentist);
+            return ResponseEntity.ok(dentistService.findById(dentist.getId()));
      }
     }
 
-
-
+@GetMapping(path = "/details")
+public Dentist getDentistBy(@RequestBody Dentist dentist) {
+    return dentistService.update(dentist);
+}
     @PutMapping(path = "/{id}")
     public Dentist update(@RequestBody Dentist dentist) {
        return dentistService.update(dentist);
