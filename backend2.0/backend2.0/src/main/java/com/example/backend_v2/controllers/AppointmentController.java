@@ -1,12 +1,15 @@
 package com.example.backend_v2.controllers;
 
 import com.example.backend_v2.entities.Appointment;
+import com.example.backend_v2.entities.AppointmentRequest;
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.AppointmentService;
 import com.example.backend_v2.services.DentistService;
 import com.example.backend_v2.services.PatientService;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import netscape.javascript.JSObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -48,9 +54,17 @@ public class AppointmentController {
 
 
     @PostMapping(path = "/", consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody Appointment appointment) {
+    public ResponseEntity<?> save(@RequestBody AppointmentRequest payload) {
 
-        System.out.println(appointment.getDateTime());
+
+        Appointment appointment= payload.getAppointment();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+        LocalDateTime dateTimeFormatted = LocalDateTime.parse(payload.getDateString(), formatter);
+
+        appointment.setDateTime(dateTimeFormatted);
+
+
         Optional<Dentist> dentist = dentistService.findById(appointment.getDentist().getId());
         Optional<Patient> patient = patientService.findById(appointment.getPatient().getId());
 
@@ -61,8 +75,6 @@ public class AppointmentController {
         if (dentist.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentist not found");
         }
-
-
 
 
         appointment.setDentist(dentist.get());
@@ -80,7 +92,6 @@ public class AppointmentController {
         Dentist dentist = appointmentService.getDentistForAppointment(appointmentId);
         return ResponseEntity.ok(dentist);
     }
-
 
 
     @GetMapping("/{appointmentId}/patient")
@@ -101,8 +112,6 @@ public class AppointmentController {
         List<Appointment> appointments = appointmentService.getAppointmentsForDentist(dentistId);
         return ResponseEntity.ok(appointments);
     }
-
-
 
 
 }

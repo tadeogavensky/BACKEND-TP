@@ -11,7 +11,7 @@ export const Appoitment = () => {
 
   const [dentist, setSelectedDentist] = useState({});
   const [patient, setSelectedPatient] = useState({});
-  const [date, setSelectedDateTime] = useState();
+  const [dateString, setSelectedDateTime] = useState();
   const [appointmentBody, setAppointmentBody] = useState({});
 
   const handleSelectDentist = (event) => {
@@ -68,14 +68,28 @@ export const Appoitment = () => {
       });
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     fetchDentists();
     fetchPatients();
     fetchAppointments();
-  }, []);
+  }, []); */
 
-  function submitForm(event) {
-    event.preventDefault();
+  const saveAppointment = (event) => {
+    setAppointmentBody({
+      patient,
+      dentist,
+      dateString,
+      assisted: false,
+    });
+
+    const payload = {
+      appointment: {
+        id: 1,
+        dentist: dentists,
+        patient: patient,
+      },
+      dateString: dateString,
+    };
 
     const Toast = Swal.mixin({
       toast: true,
@@ -89,16 +103,28 @@ export const Appoitment = () => {
       },
     });
 
-    console.log("date :>> ", date);
-    console.log("patient :>> ", patient);
-    console.log("dentist :>> ", dentist);
+    event.preventDefault();
 
-    setAppointmentBody({
-      patient,
-      dentist,
-      date,
-      assisted: false,
-    });
+    console.log("appointmentBody :>> ", payload);
+    axios
+      .post("http://localhost:8090/api/v1/appointment/", payload)
+      .then((res) => {
+        if (res.status === 200) {
+          /*    Toast.fire({
+            icon: "success",
+            title: "Appointment created successfully",
+          }); */
+        }
+      })
+      .catch((error) => {
+        /* console.log("error :>> ", error);
+        Toast.fire({
+          icon: "error",
+          title: error.response.data,
+        }); */
+      });
+
+    /* 
 
     if (patient == {}) {
       Toast.fire({
@@ -110,31 +136,15 @@ export const Appoitment = () => {
         icon: "error",
         title: "Please select a dentist",
       });
-    } else if (date == "") {
+    } else if (dateString == "") {
       Toast.fire({
         icon: "error",
         title: "Please select a date",
       });
     } else {
-      axios
-        .post("http://localhost:8090/api/v1/appointment/", appointmentBody)
-        .then((res) => {
-          if (res.status === 200) {
-            Toast.fire({
-              icon: "success",
-              title: "Appointment created successfully",
-            });
-          }
-        })
-        .catch((error) => {
-          console.log("error :>> ", error);
-          Toast.fire({
-            icon: "error",
-            title: error.response.data,
-          });
-        });
-    }
-  }
+    
+    }; */
+  };
 
   const showForm = () => {
     let form = document.getElementById("form-appointment-container");
@@ -169,7 +179,7 @@ export const Appoitment = () => {
           <h2 className="text-lg font-medium mb-4">New appointment</h2>
           <form
             className="space-y-4"
-            onSubmit={submitForm}
+            onSubmit={saveAppointment}
             id="appointmentForm"
           >
             <div className="flex flex-col">
@@ -210,7 +220,7 @@ export const Appoitment = () => {
                 onBlur={handleSelectDentist}
                 onFocus={handleSelectDentist}
               >
-                <option selected value="">
+                <option selected value={null}>
                   Select dentist
                 </option>
                 {dentists.map((dentist) => {
@@ -231,7 +241,7 @@ export const Appoitment = () => {
                 name="date"
                 type="datetime-local"
                 className="rounded-lg border-gray-400 border-solid border py-2 px-3"
-                value={date}
+                value={dateString}
                 onSubmit={handleSelectDate}
                 onChange={handleSelectDate}
                 onBlur={handleSelectDate}
