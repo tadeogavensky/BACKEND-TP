@@ -28,7 +28,7 @@ export const Main = () => {
   console.log('token :>> ', token);
     axios
       .post(
-        "http://localhost:8090/api/v1/user/details",
+        "http://localhost:9000/api/v1/user/details",
         {token}
       )
       .then((res) => {

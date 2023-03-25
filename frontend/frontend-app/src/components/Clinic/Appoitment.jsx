@@ -14,6 +14,10 @@ export const Appoitment = () => {
   const [dateString, setSelectedDateTime] = useState();
   const [appointmentBody, setAppointmentBody] = useState({});
 
+
+
+
+
   const handleSelectDentist = (event) => {
     /*  console.log("handleSelectDentist :>> ", JSON.parse(event.target.value)); */
     setSelectedDentist(JSON.parse(event.target.value));
@@ -29,7 +33,7 @@ export const Appoitment = () => {
 
   const fetchPatients = () => {
     axios
-      .get("http://localhost:8090/api/v1/patient/findAll")
+      .get("http://localhost:9000/api/v1/patient/findAll")
       .then((res) => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
@@ -42,7 +46,7 @@ export const Appoitment = () => {
 
   const fetchDentists = () => {
     axios
-      .get("http://localhost:8090/api/v1/dentist/findAll")
+      .get("http://localhost:9000/api/v1/dentist/findAll")
       .then((res) => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
@@ -56,11 +60,20 @@ export const Appoitment = () => {
 
   const fetchAppointments = () => {
     axios
-      .get("http://localhost:8090/api/v1/appointment/findAll")
+      .get("http://localhost:9000/api/v1/appointment/findAll")
       .then((res) => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
-
+        data.data.forEach((appointment) => {
+          const date = new Date(
+            appointment.dateTime[0],
+            appointment.dateTime[1] - 1,
+            appointment.dateTime[2],
+            appointment.dateTime[3],
+            appointment.dateTime[4]
+          );
+          appointment.dateTime = date.toLocaleString();
+        });
         setAppointments(data.data);
       })
       .catch((error) => {
@@ -68,11 +81,11 @@ export const Appoitment = () => {
       });
   };
 
-  /* useEffect(() => {
+  useEffect(() => {
     fetchDentists();
     fetchPatients();
     fetchAppointments();
-  }, []); */
+  }, []);
 
   const saveAppointment = (event) => {
     setAppointmentBody({
@@ -84,11 +97,11 @@ export const Appoitment = () => {
 
     const payload = {
       appointment: {
-        id: 1,
-        dentist: dentists,
+        dentist: dentist,
         patient: patient,
       },
-      dateString: dateString,
+      dateString,
+      deleted: false,
     };
 
     const Toast = Swal.mixin({
@@ -105,33 +118,15 @@ export const Appoitment = () => {
 
     event.preventDefault();
 
-    console.log("appointmentBody :>> ", payload);
-    axios
-      .post("http://localhost:8090/api/v1/appointment/", payload)
-      .then((res) => {
-        if (res.status === 200) {
-          /*    Toast.fire({
-            icon: "success",
-            title: "Appointment created successfully",
-          }); */
-        }
-      })
-      .catch((error) => {
-        /* console.log("error :>> ", error);
-        Toast.fire({
-          icon: "error",
-          title: error.response.data,
-        }); */
-      });
+    console.log(payload);
+    console.log(dateString);
 
-    /* 
-
-    if (patient == {}) {
+    if (!patient) {
       Toast.fire({
         icon: "error",
         title: "Please select a patient",
       });
-    } else if (dentist == {}) {
+    } else if (!dentist) {
       Toast.fire({
         icon: "error",
         title: "Please select a dentist",
@@ -142,8 +137,24 @@ export const Appoitment = () => {
         title: "Please select a date",
       });
     } else {
-    
-    }; */
+      axios
+        .post("http://localhost:9000/api/v1/appointment/", payload)
+        .then((res) => {
+          if (res.status === 200) {
+            Toast.fire({
+              icon: "success",
+              title: "Appointment created successfully",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+          Toast.fire({
+            icon: "error",
+            title: error.response.data,
+          });
+        });
+    }
   };
 
   const showForm = () => {
@@ -195,9 +206,10 @@ export const Appoitment = () => {
                 onBlur={handleSelectPatient}
                 onFocus={handleSelectPatient}
               >
-                <option selected value="">
+                <option value={patient} defaultValue={patient}>
                   Select patient
                 </option>
+                ;
                 {patients.map((patient) => {
                   return (
                     <option value={JSON.stringify(patient)}>
@@ -220,9 +232,10 @@ export const Appoitment = () => {
                 onBlur={handleSelectDentist}
                 onFocus={handleSelectDentist}
               >
-                <option selected value={null}>
+                <option value="" defaultValue>
                   Select dentist
                 </option>
+
                 {dentists.map((dentist) => {
                   return (
                     <option value={JSON.stringify(dentist)}>
@@ -293,15 +306,19 @@ export const Appoitment = () => {
                     <td className="py-3 px-4 text-left">
                       Dr. {appointment.dentist.lastName}
                     </td>
-                    <td className="py-3 px-4 text-left">{appointment.date}</td>
                     <td className="py-3 px-4 text-left">
-                      {appointment.assisted}
+                      {appointment.dateTime}
                     </td>
+                    <td className="py-3 px-4 text-left">
+                      {appointment.assisted ? "YES" : "NO"}
+                    </td>
+
                     <td className="flex justify-center items-center align-middle">
                       <td className="flex justify-center items-center align-middle mt-1">
                         <button
                           type="button"
-                          class="inline-block rounded bg-orange-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-orange-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-orange-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-orange-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
+                          className="inline-block rounded bg-orange-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-orange-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-orange-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-orange-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
+                       
                         >
                           <BsPencil />
                         </button>
@@ -312,6 +329,8 @@ export const Appoitment = () => {
               })}
             </tbody>
           </table>
+
+    
         </div>
       </div>
     </div>

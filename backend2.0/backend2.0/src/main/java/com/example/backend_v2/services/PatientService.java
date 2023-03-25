@@ -27,7 +27,6 @@ public class PatientService {
     }
 
     public List<Patient> findAllNotDeleted(){
-
         return patientRepository.findAllNotDeleted();
     }
 
@@ -44,26 +43,20 @@ public class PatientService {
     }
 
     public Patient update( Patient patient) {
-
-        if(!patientRepository.existsById(patient.getId())){
-            log.warn("Patient does not exists!");
-        }
         return patientRepository.save(patient);
 
     }
 
-    public ResponseEntity<Patient> safeDelete(Long id){
-        if(!patientRepository.existsById(id)){
-            log.warn("Patient does not exists!");
-            return ResponseEntity.notFound().build();
-        }
-        Optional<Patient> OptPatient = patientRepository.findById(id);
-        if (OptPatient.isPresent()){
-            Patient patient = OptPatient.get();
+    public Patient safeDelete(Long id){
+        Optional<Patient> optionalPatient = patientRepository.findById(id);
+        if (optionalPatient.isPresent()) {
+            Patient patient = optionalPatient.get();
             patient.setDeleted(true);
-            patientRepository.save(patient);
+            System.out.println(patient);
+            return patientRepository.save(patient);
+        } else {
+            return null;
         }
-        return ResponseEntity.noContent().build();
     }
 
 }

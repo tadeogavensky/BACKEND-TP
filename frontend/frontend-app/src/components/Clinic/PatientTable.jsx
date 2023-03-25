@@ -18,6 +18,17 @@ const PatientTable = () => {
   const [numberError, setNumberError] = useState("");
   const [zipcodeError, setZipcodeError] = useState("");
 
+  const patient = {
+    lastName,
+    firstName,
+    dni,
+    address: {
+      street,
+      number,
+      zipcode,
+      state,
+    },
+  };
 
   const handleFirstName = (e) => {
     setFirstName(e.target.value);
@@ -44,7 +55,7 @@ const PatientTable = () => {
 
   const fetchPatients = () => {
     axios
-      .get("http://localhost:8090/api/v1/patient/findAll")
+      .get("http://localhost:9000/api/v1/patient/findAll")
       .then((response) => {
         let json = JSON.stringify(response);
         let data = JSON.parse(json);
@@ -62,21 +73,58 @@ const PatientTable = () => {
     validateZipcode();
   }, []);
 
+  function submitUpdateForm(e) {
+    e.preventDefault();
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+    const id = 1;
+    
+
+    if (
+      !/^[0-9]*$/.test(dni) ||
+      !/^[0-9]*$/.test(zipcode) ||
+      !/^[0-9]*$/.test(number)
+    ) {
+      Toast.fire({
+        icon: "error",
+        title: "DNI, zip code and number must be numeric!",
+      });
+    } else {
+      console.log(patient);
+      axios
+        .put(`http://localhost:9000/api/v1/patient/${id}`, patient)
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("res :>> ", res.data);
+            Toast.fire({
+              icon: "success",
+              title: "Patient created successfully",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("error :>> ", error);
+          Toast.fire({
+            icon: "error",
+            title: error.response.data,
+          });
+        });
+    }
+  }
+
   function submitForm(e) {
     e.preventDefault();
 
-    const patient = {
-      lastName,
-      firstName,
-      dni,
-      address: {
-        street,
-        number,
-        zipcode,
-        state,
-        deleted: false,
-      },
-    };
 
     const Toast = Swal.mixin({
       toast: true,
@@ -116,7 +164,7 @@ const PatientTable = () => {
     } else {
       console.log(patient);
       axios
-        .post("http://localhost:8090/api/v1/patient/", patient)
+        .post("http://localhost:9000/api/v1/patient/", patient)
         .then((res) => {
           if (res.status === 200) {
             console.log("res :>> ", res.data);
@@ -143,6 +191,16 @@ const PatientTable = () => {
 
   const hideForm = () => {
     let form = document.getElementById("form-patient-container");
+    form.style.display = "none";
+  };
+
+  const showUpdateForm = () => {
+    let form = document.getElementById("form-update-patient-container");
+    form.style.display = "flex";
+  };
+
+  const hideUpdateForm = () => {
+    let form = document.getElementById("form-update-patient-container");
     form.style.display = "none";
   };
 
@@ -290,7 +348,7 @@ const PatientTable = () => {
                       onBlur={validateZipcode}
                       onSubmit={validateZipcode}
                     />
-                     {zipcodeError && (
+                    {zipcodeError && (
                       <p className="text-red-500 text-xs italic">
                         {zipcodeError}
                       </p>
@@ -360,6 +418,9 @@ const PatientTable = () => {
                       <button
                         type="button"
                         class="inline-block rounded bg-orange-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-orange-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-orange-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-orange-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
+                        onClick={() => {
+                          showUpdateForm();
+                        }}
                       >
                         <BsPencil />
                       </button>
@@ -370,6 +431,159 @@ const PatientTable = () => {
             })}
           </tbody>
         </table>
+
+        {showUpdateForm && (
+          <div
+            id="form-update-patient-container"
+            className="hidden fixed inset-0 items-center justify-center bg-gray-800 bg-opacity-75 "
+            style={{ marginTop: "0" }}
+          >
+            <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
+              <h2 className="text-lg font-medium mb-4">Update patient</h2>
+              <form className="space-y-4" onSubmit={submitUpdateForm}>
+                <div className="flex flex-col">
+                  <label className="mb-1 font-medium" for="firstName">
+                    First Name
+                  </label>
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    type="text"
+                    className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                    placeholder={firstName}
+                    onChange={handleFirstName}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="mb-1 font-medium" for="lastName">
+                    Last name
+                  </label>
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                    placeholder={lastName}
+                    onChange={handleLastName}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="mb-1 font-medium" for="date">
+                    DNI
+                  </label>
+                  <input
+                    className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
+                      dniError ? "border-red-500" : ""
+                    }`}
+                    id="registrationNumber"
+                    name="registrationNumber"
+                    type="text"
+                    onChange={handleDNI}
+                    onBlur={validateDni}
+                    onSubmit={validateDni}
+                  />
+                  {dniError && (
+                    <p className="text-red-500 text-xs italic">{dniError}</p>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <label className="mb-1 font-medium" htmlFor="street">
+                    Address
+                  </label>
+                  <div className="flex flex-wrap space-x-3">
+                    <div className="flex flex-col">
+                      <label className="mb-1 font-medium" htmlFor="street">
+                        Street
+                      </label>
+                      <input
+                        id="street"
+                        name="street"
+                        type="text"
+                        className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                        placeholder={street}
+                        onChange={handleStreet}
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="mb-1 font-medium" htmlFor="number">
+                        Number
+                      </label>
+                      <input
+                        id="number"
+                        name="number"
+                        type="text"
+                        className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
+                          numberError ? "border-red-500" : ""
+                        }`}
+                        placeholder={number}
+                        onChange={handleNumber}
+                        onBlur={validateNumber}
+                        onSubmit={validateNumber}
+                      />
+                      {numberError && (
+                        <p className="text-red-500 text-xs italic">
+                          {numberError}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="mb-1 font-medium" htmlFor="zipCode">
+                        Zip Code
+                      </label>
+                      <input
+                        id="zipCode"
+                        name="zipCode"
+                        type="text"
+                        className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
+                          zipcodeError ? "border-red-500" : ""
+                        }`}
+                        placeholder={zipcode}
+                        onChange={handleZipCode}
+                        onBlur={validateZipcode}
+                        onSubmit={validateZipcode}
+                      />
+                      {zipcodeError && (
+                        <p className="text-red-500 text-xs italic">
+                          {zipcodeError}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="mb-1 font-medium" htmlFor="state">
+                        State
+                      </label>
+                      <input
+                        id="state"
+                        name="state"
+                        type="text"
+                        className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                        placeholder={state}
+                        onChange={handleState}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-start">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-2 px-4 w-full"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg py-2 px-4"
+                    onClick={() => {
+                      hideUpdateForm();
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

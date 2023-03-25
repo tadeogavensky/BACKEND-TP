@@ -3,6 +3,7 @@ package com.example.backend_v2.services;
 
 
 import com.example.backend_v2.entities.Dentist;
+import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.repositories.DentistRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,19 +60,15 @@ public class DentistService {
 
 
 
-    public ResponseEntity<Dentist> safeDelete(Long id){
-        if(!dentistRepository.existsById(id)){
-            log.warn("Dentist does not exists!");
-            return ResponseEntity.notFound().build();
+    public Dentist safeDelete(Long id){
+        Optional<Dentist> optionalDentist = dentistRepository.findById(id);
+        if (optionalDentist.isPresent()) {
+            Dentist dentist = optionalDentist.get();
+            dentist.setDeleted(true);
+            System.out.println(dentist);
+            return dentistRepository.save(dentist);
+        } else {
+            return null;
         }
-        Optional<Dentist> OptDentist = dentistRepository.findById(id);
-        if (OptDentist.isPresent()){
-            Dentist dentist = OptDentist.get();
-            /*   dentist.setDeleted(true);*/
-            dentistRepository.save(dentist);
-        }
-        return ResponseEntity.noContent().build();
     }
-
-
 }

@@ -6,9 +6,8 @@ import com.example.backend_v2.services.AddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +18,16 @@ public class AddressController {
     AddressService addressService;
 
     private final Logger log = LoggerFactory.getLogger(AddressController.class);
+
+    /* @GetMapping("/findAll")
+    public ResponseEntity<?>findAll() {
+        return ResponseEntity.ok(addressService.findAll());
+    }*/
+
+    @GetMapping("/findAll")
+    public ResponseEntity<?> findAllNotDeleted() {
+        return ResponseEntity.ok(addressService.findAllNotDeleted());
+    }
 
 
     @PostMapping()
@@ -35,7 +44,10 @@ public class AddressController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Address> safeDelete(@PathVariable Long id){
-        return addressService.safeDelete(id);
+    public ResponseEntity<String> safeDelete(@PathVariable(value = "id") Long id) {
+        if (addressService.safeDelete(id) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Address could not be found");
+        }
+        return ResponseEntity.ok().body("Address deleted successfully");
     }
 }

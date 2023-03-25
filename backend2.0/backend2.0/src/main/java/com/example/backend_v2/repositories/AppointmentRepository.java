@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment,Long> {
 
+    @Query("SELECT a FROM Appointment a WHERE a.deleted=false")
+    List<Appointment> findAllNotDeleted();
+
     @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId")
     List<Appointment> findByPatientId(@Param("patientId") Long patientId);
 

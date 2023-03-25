@@ -2,7 +2,7 @@ package com.example.backend_v2.services;
 
 import com.example.backend_v2.entities.Appointment;
 import com.example.backend_v2.entities.Dentist;
-import com.example.backend_v2.entities.Patient;
+import com.example.backend_v2.entities.Appointment;
 import com.example.backend_v2.repositories.AppointmentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -25,6 +25,10 @@ public class AppointmentService {
     public List<Appointment> findAll(){
         List<Appointment> appointments = appointmentRepository.findAll();
         return  appointments;
+    }
+
+    public List<Appointment> findAllNotDeleted(){
+        return appointmentRepository.findAllNotDeleted();
     }
 
     public Optional<Appointment> findById(Long id){
@@ -51,18 +55,20 @@ public class AppointmentService {
         return appointment.getDentist();
     }
 
-    public Patient getPatientForAppointment(Long appointmentId) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with id: " + appointmentId));
-        return appointment.getPatient();
-    }
-
-    public List<Appointment> getAppointmentsForPatient(Long patientId) {
-        return appointmentRepository.findByPatientId(patientId);
-    }
-
     public List<Appointment> getAppointmentsForDentist(Long dentistId) {
         return appointmentRepository.findByDentistId(dentistId);
+    }
+
+    public Appointment safeDelete(Long id){
+        Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+            appointment.setDeleted(true);
+            System.out.println(appointment);
+            return appointmentRepository.save(appointment);
+        } else {
+            return null;
+        }
     }
 
 

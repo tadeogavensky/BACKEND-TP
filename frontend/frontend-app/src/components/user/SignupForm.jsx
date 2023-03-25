@@ -59,7 +59,7 @@ export const SignupForm = () => {
     };
 
     axios
-      .post("http://localhost:8090/api/v1/user/signup", user)
+      .post("http://localhost:9000/api/v1/user/signup", user)
       .then((res) => {
         if (res.request.status == 200) {
           console.log("res from userSingup :>> ", res);
