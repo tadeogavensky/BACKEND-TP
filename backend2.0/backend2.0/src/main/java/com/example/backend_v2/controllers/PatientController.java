@@ -45,6 +45,11 @@ public class PatientController {
         return ResponseEntity.ok(patientService.findById(id));
     }
 
+    @GetMapping(path = "/byDNI")
+    public ResponseEntity<?> findByDNI(@RequestBody int DNI) {
+        return ResponseEntity.ok(patientService.findByDNI(DNI));
+    }
+
     @PostMapping(path = "/", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody Patient patient) {
 

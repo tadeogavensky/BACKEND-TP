@@ -110,10 +110,7 @@ export const Appoitment = () => {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener("mouseenter", Swal.stopTimer);
-        toast.addEventListener("mouseleave", Swal.resumeTimer);
-      },
+    
     });
 
     event.preventDefault();

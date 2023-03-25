@@ -30,6 +30,8 @@ const PatientTable = () => {
     },
   };
 
+  console.log("patient :>> ", patient);
+
   const handleFirstName = (e) => {
     setFirstName(e.target.value);
   };
@@ -82,13 +84,16 @@ const PatientTable = () => {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener("mouseenter", Swal.stopTimer);
-        toast.addEventListener("mouseleave", Swal.resumeTimer);
-      },
     });
-    const id = 1;
-    
+
+  
+
+    axios.get("http://localhost:9000/api/v1/patient/byDNI", dni)
+    .then((res) => {
+      setFirstName(res.firstName)
+    })
+
+
 
     if (
       !/^[0-9]*$/.test(dni) ||
@@ -101,6 +106,7 @@ const PatientTable = () => {
       });
     } else {
       console.log(patient);
+      let id
       axios
         .put(`http://localhost:9000/api/v1/patient/${id}`, patient)
         .then((res) => {
@@ -108,7 +114,7 @@ const PatientTable = () => {
             console.log("res :>> ", res.data);
             Toast.fire({
               icon: "success",
-              title: "Patient created successfully",
+              title: "Patient updated successfully",
             });
           }
         })
@@ -125,17 +131,12 @@ const PatientTable = () => {
   function submitForm(e) {
     e.preventDefault();
 
-
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener("mouseenter", Swal.stopTimer);
-        toast.addEventListener("mouseleave", Swal.resumeTimer);
-      },
     });
 
     if (
@@ -243,6 +244,7 @@ const PatientTable = () => {
           </button>
         </div>
 
+        {}
         <div
           id="form-patient-container"
           className="hidden fixed inset-0 items-center justify-center bg-gray-800 bg-opacity-75 "
@@ -481,6 +483,7 @@ const PatientTable = () => {
                     onChange={handleDNI}
                     onBlur={validateDni}
                     onSubmit={validateDni}
+                    placeholder={dni}
                   />
                   {dniError && (
                     <p className="text-red-500 text-xs italic">{dniError}</p>
@@ -537,7 +540,7 @@ const PatientTable = () => {
                         className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
                           zipcodeError ? "border-red-500" : ""
                         }`}
-                        placeholder={zipcode}
+                        placeholder={patient.zipcode}
                         onChange={handleZipCode}
                         onBlur={validateZipcode}
                         onSubmit={validateZipcode}

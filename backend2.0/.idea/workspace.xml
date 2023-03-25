@@ -5,27 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="70c48259-02fb-4c0b-afd7-2d7f92e37d0d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/config/WebConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/utils/IsNull.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/AddressController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/AddressController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/AppointmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/AppointmentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/DentistController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/DentistController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/PatientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/PatientController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/entities/Appointment.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/entities/Appointment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/repositories/AppointmentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/repositories/AppointmentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/services/AddressService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/services/AddressService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/services/AppointmentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/services/AppointmentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/services/DentistService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/services/DentistService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/services/PatientService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/services/PatientService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/Appoitment.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/Appoitment.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/DentistTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/DentistTable.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/PatientTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/PatientTable.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Main.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/user/LoginForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/user/LoginForm.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/user/SignupForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/user/SignupForm.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
