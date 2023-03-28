@@ -4,44 +4,67 @@ import { BsPencil } from "react-icons/bs";
 import Swal from "sweetalert2";
 import { Patient } from "@/types/Patient";
 import { Address } from "@/types/Address";
+import { AiOutlineClose } from "react-icons/ai";
 
 const PatientTable = () => {
-  const [patient, setPatient] = useState<Partial<Patient>>({});
+  const [patient, setPatient] = useState<Patient>({
+    id: 0,
+    firstName: "",
+    lastName: "",
+    dni: "",
+    address: {
+      street: "",
+      number: "",
+      state: "",
+      zipcode: "",
+    },
+  });
+
   const [patients, setPatients] = useState<Patient[]>([]);
 
   const [showForm, setShowForm] = useState(false);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
-
   const [dniError, setDniError] = useState("");
   const [numberError, setNumberError] = useState("");
   const [zipcodeError, setZipcodeError] = useState("");
 
+  function handlePatientChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    const { name, value } = event.target;
+
+    setPatient((prevPatient) => ({
+      ...prevPatient,
+      [name]: value,
+    }));
+  }
+
+  function handleAddressChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.target;
+
+    setPatient((prevPatient) => ({
+      ...prevPatient,
+      address: {
+        ...prevPatient.address,
+        [name]: value,
+      },
+    }));
+  }
 
   function validatePatient(patient: Partial<Patient>): boolean {
+    console.log(patient);
     if (
-      !patient.lastName ||
-      !patient.firstName ||
-      !patient.dni ||
-      !patient.address
+      patient.firstName?.length === 0 ||
+      patient.lastName?.length === 0 ||
+      patient.dni?.toString()?.length === 0 ||
+      patient.address?.street?.length === 0 ||
+      patient.address?.number?.length === 0 ||
+      patient.address?.zipcode?.length === 0 ||
+      patient.address?.state.length === 0
     ) {
       return false;
     }
-
-    if (
-      typeof patient.lastName !== "string" ||
-      typeof patient.firstName !== "string" ||
-      typeof patient.dni !== "string" ||
-      typeof patient.address !== "object" ||
-      typeof patient.address.street !== "string" ||
-      typeof patient.address.number !== "number" ||
-      typeof patient.address.zipcode !== "string" ||
-      typeof patient.address.state !== "string"
-    ) {
-      return false;
-    }
-
-    // Si todas las validaciones pasaron, retornar verdadero
     return true;
   }
 
@@ -50,13 +73,11 @@ const PatientTable = () => {
     value: number | string
   ) => {
     if (field in patient) {
-      // Actualizar un campo de nivel superior en la interfaz Patient
       setPatient({
         ...patient,
         [field]: value,
       });
     } else if (patient.address && field in patient.address) {
-      // Actualizar un campo dentro del objeto address
       setPatient({
         ...patient,
         address: {
@@ -64,16 +85,12 @@ const PatientTable = () => {
           [field]: value,
         },
       });
-    } else {
-
-     
-
     }
   };
 
   const fetchPatients = () => {
     axios
-      .get("http://localhost:9000/api/v1/patient/findAll")
+      .get("http://localhost:9010/api/v1/patient/findAll")
       .then((response) => {
         const json = JSON.stringify(response);
         const data = JSON.parse(json);
@@ -83,13 +100,6 @@ const PatientTable = () => {
         console.error(error);
       });
   };
-
-  useEffect(() => {
-    fetchPatients();
-    validateDni();
-    validateNumber();
-    validateZipcode();
-  }, []);
 
   function submitUpdateForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -103,7 +113,7 @@ const PatientTable = () => {
     });
 
     axios
-      .get(`http://localhost:9000/api/v1/patient/byDNI/${patient.dni}`)
+      .get(`http://localhost:9010/api/v1/patient/byDNI/${patient.dni}`)
       .then((res) => {
         updateField("firstName", res.data.firstName);
       });
@@ -117,10 +127,15 @@ const PatientTable = () => {
         icon: "error",
         title: "DNI, zip code and number must be numeric!",
       });
+    } else if (patient.dni?.toString().length >= 10) {
+      Toast.fire({
+        icon: "error",
+        title: "DNI is out of range!",
+      });
     } else {
-      console.log(patient);
+      console.log("patient to update " + JSON.stringify(patient));
       axios
-        .put(`http://localhost:9000/api/v1/patient/${patient.id}`, patient)
+        .put(`http://localhost:9010/api/v1/patient/${patient.id}`, patient)
         .then((res) => {
           if (res.status === 200) {
             console.log("res :>> ", res.data);
@@ -151,13 +166,13 @@ const PatientTable = () => {
       timerProgressBar: true,
     });
 
-    /* if (!validatePatient(patient)) {
+    if (!validatePatient(patient)) {
       Toast.fire({
         icon: "error",
         title: "Please complete all fields!",
       });
       return;
-    } else */ if (
+    } else if (
       !/^[0-9]*$/.test(patient.dni?.toString() || "") ||
       !/^[0-9]*$/.test(patient.address?.zipcode.toString() || "") ||
       !/^[0-9]*$/.test(patient.address?.number.toString() || "")
@@ -166,13 +181,17 @@ const PatientTable = () => {
         icon: "error",
         title: "DNI, zip code and number must be numeric!",
       });
+    } else if (patient.dni?.toString().length >= 10) {
+      Toast.fire({
+        icon: "error",
+        title: "DNI is out of range!",
+      });
     } else {
-      console.log(patient);
+      console.log("patient to submit ", patient);
       axios
-        .post("http://localhost:9000/api/v1/patient/", patient)
+        .post("http://localhost:9010/api/v1/patient/", patient)
         .then((res) => {
           if (res.status === 200) {
-            console.log("res :>> ", res.data);
             Toast.fire({
               icon: "success",
               title: "Patient created successfully",
@@ -188,8 +207,6 @@ const PatientTable = () => {
         });
     }
   }
-
-  const handleUpdate = () => {};
 
   const validateDni = () => {
     if (!/^[0-9]*$/.test(patient.dni?.toString() || "")) {
@@ -209,11 +226,64 @@ const PatientTable = () => {
 
   const validateZipcode = () => {
     if (!/^[0-9]*$/.test(patient.address?.zipcode.toString() || "")) {
+      console.log("ZIPCODE");
       setZipcodeError("Zip code must be numeric");
     } else {
       setZipcodeError("");
     }
   };
+
+  const handlePatientDelete = (id: number) => {
+    console.log("patient :>> ", patient);
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to delete the patient with ID ${id}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        submitDelete(id);
+      } else {
+        return;
+      }
+    });
+  };
+  const submitDelete = (id: number) => {
+    console.log("entra :>> ");
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+
+    axios
+      .delete(`http://localhost:9010/api/v1/patient/${id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("res :>> ", res.data);
+          Toast.fire({
+            icon: "success",
+            title: "Patient deleted successfully",
+          });
+          window.location.href = "/";
+        }
+      })
+      .catch((error) => {
+        Toast.fire({
+          icon: "error",
+          title: error.response.data,
+        });
+      });
+  };
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
 
   return (
     <div className="w-full">
@@ -241,27 +311,23 @@ const PatientTable = () => {
                 <div className="flex flex-col">
                   <label className="mb-1 font-medium">First Name</label>
                   <input
-                    id="firstName"
-                    name="firstName"
                     type="text"
                     className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                     value={patient.firstName}
-                    onChange={(e) => {
-                      updateField("firstName", e.target.value);
-                    }}
+                    onChange={(event) =>
+                      setPatient({ ...patient, firstName: event.target.value })
+                    }
                   />
                 </div>
                 <div className="flex flex-col">
                   <label className="mb-1 font-medium">Last name</label>
                   <input
-                    id="lastName"
-                    name="lastName"
                     type="text"
                     className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                     value={patient.lastName}
-                    onChange={(e) => {
-                      updateField("lastName", e.target.value);
-                    }}
+                    onChange={(event) =>
+                      setPatient({ ...patient, lastName: event.target.value })
+                    }
                   />
                 </div>
                 <div className="flex flex-col">
@@ -270,12 +336,16 @@ const PatientTable = () => {
                     className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
                       dniError ? "border-red-500" : ""
                     }`}
-                    id="registrationNumber"
-                    name="registrationNumber"
+                    id="dni"
+                    name="dni"
                     type="text"
-                    onChange={(e) => {
-                      updateField("dni", e.target.value);
-                    }}
+                    value={patient.dni}
+                    onChange={(event) =>
+                      setPatient({
+                        ...patient,
+                        dni: event.target.value,
+                      })
+                    }
                     onBlur={validateDni}
                     onSubmit={validateDni}
                   />
@@ -293,8 +363,15 @@ const PatientTable = () => {
                         name="street"
                         type="text"
                         className="rounded-lg border-gray-400 border-solid border py-2 px-3"
-                        onChange={(e) => {
-                          updateField("dni", e.target.value);
+                        value={patient.address.street}
+                        onChange={(event) => {
+                          setPatient((prevPatient) => ({
+                            ...prevPatient,
+                            address: {
+                              ...prevPatient.address,
+                              street: event.target.value,
+                            },
+                          }));
                         }}
                       />
                     </div>
@@ -309,8 +386,15 @@ const PatientTable = () => {
                         className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
                           numberError ? "border-red-500" : ""
                         }`}
-                        onChange={(e) => {
-                          updateField("number", e.target.value);
+                        value={patient.address.number}
+                        onChange={(event) => {
+                          setPatient((prevPatient) => ({
+                            ...prevPatient,
+                            address: {
+                              ...prevPatient.address,
+                              number: event.target.value,
+                            },
+                          }));
                         }}
                         onBlur={validateNumber}
                         onSubmit={validateNumber}
@@ -332,8 +416,15 @@ const PatientTable = () => {
                         className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
                           zipcodeError ? "border-red-500" : ""
                         }`}
-                        onChange={(e) => {
-                          updateField("zipcode", e.target.value);
+                        value={patient.address.zipcode}
+                        onChange={(event) => {
+                          setPatient((prevPatient) => ({
+                            ...prevPatient,
+                            address: {
+                              ...prevPatient.address,
+                              zipcode: event.target.value,
+                            },
+                          }));
                         }}
                         onBlur={validateZipcode}
                         onSubmit={validateZipcode}
@@ -353,8 +444,15 @@ const PatientTable = () => {
                         name="state"
                         type="text"
                         className="rounded-lg border-gray-400 border-solid border py-2 px-3"
-                        onChange={(e) => {
-                          updateField("state", e.target.value);
+                        value={patient.address.state}
+                        onChange={(event) => {
+                          setPatient((prevPatient) => ({
+                            ...prevPatient,
+                            address: {
+                              ...prevPatient.address,
+                              state: event.target.value,
+                            },
+                          }));
                         }}
                       />
                     </div>
@@ -389,7 +487,7 @@ const PatientTable = () => {
               <th className="py-3 px-4 text-left">First name</th>
               <th className="py-3 px-4 text-left">DNI</th>
               <th className="py-3 px-4 text-left">Address</th>
-              <th className="py-3 px-4">Edit</th>
+              <th className="py-3 px-4">Settings</th>
             </tr>
           </thead>
           <tbody className="text-gray-600 text-sm font-light">
@@ -404,8 +502,8 @@ const PatientTable = () => {
                     {patient.address.street},{patient.address.number},
                     {patient.address.zipcode},{patient.address.state}
                   </td>
-                  <td className="flex justify-center items-center align-middle">
-                    <td className="flex justify-center items-center align-middle mt-1 mr-4">
+                  <td className="flex-col justify-start">
+                    <td className="flex justify-center items-center align-middle my-2">
                       <button
                         type="button"
                         className="inline-block rounded bg-orange-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-orange-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-orange-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-orange-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
@@ -417,6 +515,19 @@ const PatientTable = () => {
                         <BsPencil />
                       </button>
                     </td>
+                    <td className="flex justify-center items-center align-middle my-2">
+                      <button
+                        type="button"
+                        className="inline-block rounded bg-red-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-red-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-red-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-red-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
+                        onClick={() => patient.id !== undefined && handlePatientDelete(patient.id)}
+                      >
+                        <AiOutlineClose />
+                      </button>
+                    </td>
+                  </td>
+
+                  <td className="flex justify-center items-center align-middle">
+                  
                   </td>
                 </tr>
               );
@@ -439,9 +550,7 @@ const PatientTable = () => {
                     type="text"
                     className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                     placeholder={patient.firstName}
-                    onChange={(e) => {
-                      updateField("firstName", e.target.value);
-                    }}
+                    onChange={handlePatientChange}
                   />
                 </div>
                 <div className="flex flex-col">
@@ -452,9 +561,7 @@ const PatientTable = () => {
                     type="text"
                     className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                     placeholder={patient.lastName}
-                    onChange={(e) => {
-                      updateField("lastName", e.target.value);
-                    }}
+                    onChange={handlePatientChange}
                   />
                 </div>
                 <div className="flex flex-col">
@@ -463,15 +570,13 @@ const PatientTable = () => {
                     className={`rounded-lg border-gray-400 border-solid border py-2 px-3 ${
                       dniError ? "border-red-500" : ""
                     }`}
-                    id="registrationNumber"
-                    name="registrationNumber"
+                    id="dni"
+                    name="dni"
                     type="text"
                     onBlur={validateDni}
                     onSubmit={validateDni}
-                    placeholder={patient.dni?.toString() || ""}
-                    onChange={(e) => {
-                      updateField("dni", e.target.value);
-                    }}
+                    placeholder={patient.dni?.toString()}
+                    onChange={handlePatientChange}
                   />
                   {dniError && (
                     <p className="text-red-500 text-xs italic">{dniError}</p>
@@ -488,9 +593,7 @@ const PatientTable = () => {
                         type="text"
                         className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                         placeholder={patient.address?.street}
-                        onChange={(e) => {
-                          updateField("street", e.target.value);
-                        }}
+                        onChange={handleAddressChange}
                       />
                     </div>
                     <div className="flex flex-col">
@@ -507,9 +610,7 @@ const PatientTable = () => {
                         placeholder={patient.address?.number.toString()}
                         onBlur={validateNumber}
                         onSubmit={validateNumber}
-                        onChange={(e) => {
-                          updateField("number", e.target.value);
-                        }}
+                        onChange={handleAddressChange}
                       />
                       {numberError && (
                         <p className="text-red-500 text-xs italic">
@@ -531,9 +632,7 @@ const PatientTable = () => {
                         placeholder={patient.address?.zipcode.toString() || ""}
                         onBlur={validateZipcode}
                         onSubmit={validateZipcode}
-                        onChange={(e) => {
-                          updateField("number", e.target.value);
-                        }}
+                        onChange={handleAddressChange}
                       />
                       {zipcodeError && (
                         <p className="text-red-500 text-xs italic">
@@ -551,9 +650,7 @@ const PatientTable = () => {
                         type="text"
                         className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                         placeholder={patient.address?.state.toString() || ""}
-                        onChange={(e) => {
-                          updateField("state", e.target.value);
-                        }}
+                        onChange={handleAddressChange}
                       />
                     </div>
                   </div>

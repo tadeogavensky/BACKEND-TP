@@ -5,6 +5,6 @@ export interface Appointment {
   id?: number;
   dentist: Dentist;
   patient: Patient;
-  dateTime: Date;
+  dateTime: string;
   assisted: boolean;
 }

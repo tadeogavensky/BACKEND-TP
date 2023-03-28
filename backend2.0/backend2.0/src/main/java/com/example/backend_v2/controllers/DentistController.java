@@ -59,7 +59,7 @@ public Dentist getDentistBy(@RequestBody Dentist dentist) {
     return dentistService.update(dentist);
 }
     @PutMapping("/{id}")
-    public ResponseEntity<Dentist> updateDentist(@PathVariable(value = "id") Long dentistId,
+    public ResponseEntity<String> updateDentist(@PathVariable(value = "id") Long dentistId,
                                                  @RequestBody Dentist dentistDetails){
 
         Optional<Dentist> dentist = dentistService.findById(dentistId);
@@ -70,6 +70,17 @@ public Dentist getDentistBy(@RequestBody Dentist dentist) {
         }
 
         Dentist dentistFound = dentist.get();
+
+        List<Dentist> dentistList = dentistService.findAllNotDeleted();
+
+        System.out.println(dentistDetails.getRegistrationNumber());
+
+        for (int i = 0; i < dentistList.size(); i++) {
+            if (dentistList.get(i).getRegistrationNumber() == dentistDetails.getRegistrationNumber()){
+                return  ResponseEntity.status(HttpStatus.FOUND).body("Already a dentist with that RN!");
+            }
+
+        }
 
         IsNull isNull = new IsNull();
 
@@ -87,9 +98,8 @@ public Dentist getDentistBy(@RequestBody Dentist dentist) {
             dentistFound.setRegistrationNumber(dentistDetails.getRegistrationNumber());
         }
 
-
         Dentist updatedDentist = dentistService.save(dentistFound);
-        return ResponseEntity.ok(updatedDentist);
+        return ResponseEntity.ok("Updated dentist " + updatedDentist);
     }
 
     @DeleteMapping("/{id}")

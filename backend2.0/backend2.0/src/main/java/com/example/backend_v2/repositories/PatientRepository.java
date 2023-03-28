@@ -11,6 +11,6 @@ public interface PatientRepository extends JpaRepository<Patient,Long> {
 
     @Query("SELECT p FROM Patient p WHERE p.deleted=false")
     List<Patient> findAllNotDeleted();
-    @Query("SELECT p FROM Patient p WHERE p.dni = ?1")
+    @Query("SELECT p FROM Patient p WHERE p.dni = ?1 AND p.deleted = false")
     Patient findByDNI(int dni);
 }

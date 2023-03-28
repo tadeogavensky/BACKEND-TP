@@ -3,9 +3,15 @@ import React, { useEffect, useState } from "react";
 import { BsPencil } from "react-icons/bs";
 import Swal from "sweetalert2";
 import { Dentist } from "@/types/Dentist";
+import { AiOutlineClose } from "react-icons/ai";
 
 export const DentistTable = () => {
-  const [dentist, setDentist] = useState<Partial<Dentist>>({});
+  const [dentist, setDentist] = useState<Dentist>({
+    id: 0,
+    firstName: "",
+    lastName: "",
+    registrationNumber: "",
+  });
   const [dentists, setDentists] = useState<Dentist[]>([]);
 
   const [showForm, setShowForm] = useState(false);
@@ -13,23 +19,25 @@ export const DentistTable = () => {
 
   const [rnError, setRnError] = useState("");
 
+  function handleDentistChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    const { name, value } = event.target;
+
+    setDentist((prevDentist) => ({
+      ...prevDentist,
+      [name]: value,
+    }));
+  }
+
   function validateDentist(dentist: Partial<Dentist>): boolean {
     if (
-      !dentist.lastName ||
-      !dentist.firstName ||
-      !dentist.registrationNumber
+      dentist.firstName?.length === 0 ||
+      dentist.lastName?.length === 0 ||
+      dentist.registrationNumber?.toString()?.length === 0
     ) {
       return false;
     }
-
-    if (
-      typeof dentist.lastName !== "string" ||
-      typeof dentist.firstName !== "string" ||
-      typeof dentist.registrationNumber !== "number"
-    ) {
-      return false;
-    }
-
     return true;
   }
 
@@ -46,7 +54,7 @@ export const DentistTable = () => {
 
   const fetchDentists = () => {
     axios
-      .get("http://localhost:9000/api/v1/dentist/findAll")
+      .get("http://localhost:9010/api/v1/dentist/findAll")
       .then((response) => {
         let json = JSON.stringify(response);
         let data = JSON.parse(json);
@@ -59,7 +67,6 @@ export const DentistTable = () => {
 
   useEffect(() => {
     fetchDentists();
-    validateRegistrationNumber();
   }, []);
 
   const submitUpdateForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -75,7 +82,7 @@ export const DentistTable = () => {
 
     axios
       .get(
-        `http://localhost:9000/api/v1/dentist/byRN/${dentist.registrationNumber}`
+        `http://localhost:9010/api/v1/dentist/byRN/${dentist.registrationNumber}`
       )
       .then((res) => {
         updateField("firstName", res.data.firstName);
@@ -88,7 +95,7 @@ export const DentistTable = () => {
       });
     } else {
       axios
-        .put(`http://localhost:9000/api/v1/dentist/${dentist.id}`, dentist)
+        .put(`http://localhost:9010/api/v1/dentist/${dentist.id}`, dentist)
         .then((res) => {
           if (res.status === 200) {
             console.log("res :>> ", res.data);
@@ -142,7 +149,7 @@ export const DentistTable = () => {
       });
     } else {
       axios
-        .post("http://localhost:9000/api/v1/dentist/", dentist)
+        .post("http://localhost:9010/api/v1/dentist/", dentist)
         .then((res) => {
           if (res.status === 200) {
             console.log("res :>> ", res.data);
@@ -159,6 +166,54 @@ export const DentistTable = () => {
           });
         });
     }
+  };
+
+  const handleDentistDelete = (id: number) => {
+    console.log("dentist :>> ", dentist);
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to delete the dentist with ID ${id}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        submitDelete(id);
+      } else {
+        return;
+      }
+    });
+  };
+  const submitDelete = (id: number) => {
+    console.log("entra :>> ");
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+
+    axios
+      .delete(`http://localhost:9010/api/v1/dentist/${id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("res :>> ", res.data);
+          Toast.fire({
+            icon: "success",
+            title: "Dentist deleted successfully",
+          });
+          window.location.href = "/";
+        }
+      })
+      .catch((error) => {
+        Toast.fire({
+          icon: "error",
+          title: error.response.data,
+        });
+      });
   };
 
   return (
@@ -193,9 +248,12 @@ export const DentistTable = () => {
                       type="text"
                       className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                       value={dentist.firstName}
-                      onChange={(e) => {
-                        updateField("firstName", e.target.value);
-                      }}
+                      onChange={(event) =>
+                        setDentist({
+                          ...dentist,
+                          firstName: event.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div className="flex flex-col">
@@ -206,9 +264,12 @@ export const DentistTable = () => {
                       type="text"
                       className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                       value={dentist.lastName}
-                      onChange={(e) => {
-                        updateField("lastName", e.target.value);
-                      }}
+                      onChange={(event) =>
+                        setDentist({
+                          ...dentist,
+                          lastName: event.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div className="flex flex-col">
@@ -222,9 +283,13 @@ export const DentistTable = () => {
                         rnError ? "border-red-500" : ""
                       }`}
                       type="text"
-                      onChange={(e) => {
-                        updateField("registrationNumber", e.target.value);
-                      }}
+                      value={dentist.registrationNumber}
+                      onChange={(event) =>
+                        setDentist({
+                          ...dentist,
+                          registrationNumber: event.target.value,
+                        })
+                      }
                       onBlur={validateRegistrationNumber}
                       onSubmit={validateRegistrationNumber}
                     />
@@ -259,8 +324,8 @@ export const DentistTable = () => {
                 <th className="py-3 px-4 text-left">ID</th>
                 <th className="py-3 px-4 text-left">Last name</th>
                 <th className="py-3 px-4 text-left">First name</th>
-                <th className="py-3 px-4 text-left">Registration Number</th>
-                <th className="py-3 px-4">Edit</th>
+                <th className="py-3 px-4 text-center">Registration Number</th>
+                <th className="py-3 px-4">Settings</th>
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
@@ -270,7 +335,7 @@ export const DentistTable = () => {
                     <td className="py-3 px-5 text-left">{dentist.id}</td>
                     <td className="py-3 px-4 text-left">{dentist.lastName}</td>
                     <td className="py-3 px-4 text-left">{dentist.firstName}</td>
-                    <td className="py-3 px-4 text-left">
+                    <td className="py-3 px-4 text-center">
                       {dentist.registrationNumber}
                     </td>
                     <td className="flex justify-center items-center align-middle">
@@ -282,8 +347,20 @@ export const DentistTable = () => {
                             setDentist(dentist);
                             setShowUpdateForm(true);
                           }}
-                       >
+                        >
                           <BsPencil />
+                        </button>
+                      </td>
+                    </td>
+
+                    <td className="flex justify-center items-center align-middle">
+                      <td className="flex justify-center items-center align-middle mt-1">
+                        <button
+                          type="button"
+                          className="inline-block rounded bg-red-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-red-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-red-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-red-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
+                          onClick={() => dentist.id !== undefined && handleDentistDelete(dentist.id)}
+                        >
+                          <AiOutlineClose />
                         </button>
                       </td>
                     </td>
@@ -308,9 +385,7 @@ export const DentistTable = () => {
                       type="text"
                       className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                       placeholder={dentist.firstName}
-                      onChange={(e) => {
-                        updateField("firstName", e.target.value);
-                      }}
+                      onChange={handleDentistChange}
                     />
                   </div>
                   <div className="flex flex-col">
@@ -321,9 +396,7 @@ export const DentistTable = () => {
                       type="text"
                       className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                       placeholder={dentist.lastName}
-                      onChange={(e) => {
-                        updateField("lastName", e.target.value);
-                      }}
+                      onChange={handleDentistChange}
                     />
                   </div>
                   <div className="flex flex-col">
@@ -340,9 +413,7 @@ export const DentistTable = () => {
                       onBlur={validateRegistrationNumber}
                       onSubmit={validateRegistrationNumber}
                       placeholder={dentist.registrationNumber?.toString() || ""}
-                      onChange={(e) => {
-                        updateField("registrationNumber", e.target.value);
-                      }}
+                      onChange={handleDentistChange}
                     />
                     {rnError && (
                       <p className="text-red-500 text-xs italic">{rnError}</p>

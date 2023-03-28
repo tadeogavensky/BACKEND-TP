@@ -1,32 +1,35 @@
+import { User } from "@/types/User";
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 import Swal from "sweetalert2";
 
 export const SignupForm = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [user, setUser] = useState<Partial<User>>({});
+
   const [confirmPassword, setConfirmPassword] = useState("");
   const [repeatPasswordError, setRepeatPasswordError] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
- 
 
-  const handleUsernameChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setUsername(e.target.value);
+  const updateField = (field: keyof User, value: number | string | boolean) => {
+    if (field in user) {
+      console.log('entra a aca updateField de user ');
+      setUser({
+        ...user,
+        [field]: value,
+      });
+    } else {
+      throw new Error(`Invalid field: ${field}`);
+    }
   };
 
-  const handlePasswordChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setPassword(e.target.value);
-  };
+  function validateUser(user: Partial<User>): boolean {
+    if (!user.username || !user.password || !validateRepeatPassword()) {
+      return false;
+    }
 
-  const handleConfirmPasswordChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setConfirmPassword(e.target.value);
-  };
+    return true;
+  }
 
-  const handleAdminChange = (e: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
-    setIsAdmin(e.target.checked);
-  };
-
-  const submitForm = (e: { preventDefault: () => void; }) => {
+  const submitForm = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     const Toast = Swal.mixin({
       toast: true,
@@ -34,32 +37,22 @@ export const SignupForm = () => {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener("mouseenter", Swal.stopTimer);
-        toast.addEventListener("mouseleave", Swal.resumeTimer);
-      },
     });
 
-    if (username === "" || password === "" || confirmPassword === "") {
+    if (!validateUser(user)) {
       Toast.fire({
         icon: "error",
         title: "Please complete all fields!",
       });
-      return; // stop form submission
+      return;
     }
-    if (password !== confirmPassword) {
-      setRepeatPasswordError("Passwords do not match");
-      return; // stop form submission
-    }
-
-    const user = {
-      username: username,
-      password: password,
-      role: isAdmin,
-    };
 
     axios
-      .post("http://localhost:9000/api/v1/user/signup", user)
+      .post("http://localhost:9010/api/v1/user/signup", {
+        username: user.username,
+        password: user.password,
+        role: user.role,
+      })
       .then((res) => {
         if (res.request.status == 200) {
           console.log("res from userSingup :>> ", res);
@@ -69,9 +62,7 @@ export const SignupForm = () => {
           });
         }
 
-        sessionStorage.setItem('token', res.data.token);
-       
-        
+        sessionStorage.setItem("token", res.data.token);
       })
       .catch((error) => {
         console.log(error);
@@ -83,16 +74,16 @@ export const SignupForm = () => {
   };
 
   const validateRepeatPassword = () => {
-    if (password !== confirmPassword) {
+    console.log("user.password " +user.password);
+    console.log('confirmPassword ' + confirmPassword);
+    if (user.password !== confirmPassword) {
       setRepeatPasswordError("Passwords do not match");
+      return false;
     } else {
       setRepeatPasswordError("");
+      return true;
     }
   };
-
-  useEffect(() => {
-    validateRepeatPassword();
-  }, [confirmPassword]);
 
   return (
     <form id="signup-form" onSubmit={submitForm}>
@@ -109,8 +100,10 @@ export const SignupForm = () => {
           type="username"
           placeholder="Username"
           name="username"
-          value={username}
-          onChange={handleUsernameChange}
+          value={user.username}
+          onChange={(e) => {
+            updateField("username", e.target.value);
+          }}
         />
       </div>
       <div className="mb-4">
@@ -126,8 +119,9 @@ export const SignupForm = () => {
           type="password"
           placeholder="Password"
           name="password"
-          value={password}
-          onChange={handlePasswordChange}
+          onChange={(e) => {
+            updateField("password", e.target.value);
+          }}
         />
       </div>
       <div className="mb-4">
@@ -145,10 +139,10 @@ export const SignupForm = () => {
           type="password"
           placeholder="Confirm Password"
           name="confirmPassword"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-          onBlur={validateRepeatPassword}
-          onSubmit={validateRepeatPassword}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value)
+            validateRepeatPassword();
+          }}
         />
         {repeatPasswordError && (
           <p className="text-red-500 text-xs italic">{repeatPasswordError}</p>
@@ -163,8 +157,10 @@ export const SignupForm = () => {
           type="checkbox"
           id="isAdmin"
           name="isAdmin"
-          checked={isAdmin}
-          onChange={handleAdminChange}
+          checked={user.role}
+          onChange={(e) => {
+            updateField("role", e.target.value);
+          }}
         />
       </div>
 

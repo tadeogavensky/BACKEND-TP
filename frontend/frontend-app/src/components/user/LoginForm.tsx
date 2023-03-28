@@ -1,23 +1,36 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { User } from "@/types/User";
 import axios from "axios";
 import React from "react";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
 export const LoginForm = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [user, setUser] = useState<Partial<User>>({});
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleusernameChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-    setUsername(event.target.value);
+  const updateField = (field: keyof User, value: number | string | boolean) => {
+    if (field in user) {
+      setUser({
+        ...user,
+        [field]: value,
+      });
+    } else {
+      throw new Error(`Invalid field: ${field}`);
+    }
   };
 
-  const handlePasswordChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-    setPassword(event.target.value);
-  };
+  function validateUser(user: Partial<User>): boolean {
+    if (!user.username || !user.password) {
+      return false;
+    }
 
-  const handleSubmit = (event: { preventDefault: () => void; }) => {
+    return true;
+  }
+
+  const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     const Toast = Swal.mixin({
@@ -26,42 +39,36 @@ export const LoginForm = () => {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener("mouseenter", Swal.stopTimer);
-        toast.addEventListener("mouseleave", Swal.resumeTimer);
-      },
     });
-
-    if(username === "" || password === ""){
+    if (!validateUser(user)) {
       Toast.fire({
         icon: "error",
         title: "Please complete all fields!",
       });
-      return; 
-    }
-
-    axios
-      .post("http://localhost:9000/api/v1/user/login", { username, password })
-      .then((res) => {
-        if (res.request.status == 200) {
-          console.log('res from userLogin :>> ', res);
+      return;
+    } else {
+      axios
+        .post("http://localhost:9010/api/v1/user/login", {
+          username: user.username,
+          password: user.password,
+        })
+        .then((res) => {
+          if (res.request.status == 200) {
+            Toast.fire({
+              icon: "success",
+              title: "Signed in successfully",
+            });
+            sessionStorage.setItem("token", res.data.token);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
           Toast.fire({
-            icon: "success",
-            title: "Signed in successfully",
+            icon: "error",
+            title: "User not found or invalid data",
           });
-
-          sessionStorage.setItem('token', res.data.token);
-
-
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        Toast.fire({
-          icon: "error",
-          title: "User not found or invalid data",
         });
-      });
+    }
   };
 
   return (
@@ -80,8 +87,10 @@ export const LoginForm = () => {
             id="username"
             type="username"
             placeholder="Username"
-            value={username}
-            onChange={handleusernameChange}
+            value={user.username}
+            onChange={(e) => {
+              updateField("username", e.target.value);
+            }}
           />
         </div>
         <div className="mb-4">
@@ -96,8 +105,10 @@ export const LoginForm = () => {
             id="password"
             type="password"
             placeholder="Password"
-            value={password}
-            onChange={handlePasswordChange}
+            value={user.password}
+            onChange={(e) => {
+              updateField("password", e.target.value);
+            }}
           />
         </div>
         <div className="flex items-center justify-between">

@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface DentistRepository extends JpaRepository<Dentist,Long> {
 
-    @Query("SELECT d FROM Dentist d WHERE d.registrationNumber = ?1")
+    @Query("SELECT d FROM Dentist d WHERE d.registrationNumber = ?1 AND d.deleted = false")
     Dentist findByRegistrationNumber(int RN);
     @Query("SELECT d FROM Dentist d WHERE d.deleted=false")
     List<Dentist> findAllNotDeleted();
-    @Query("SELECT d FROM Dentist d WHERE d.firstName = ?1 AND d.lastName = ?2")
+    @Query("SELECT d FROM Dentist d WHERE d.firstName = ?1 AND d.lastName = ?2 AND d.deleted = false")
     Dentist findByDentist(String firstName, String lastName);
 }

@@ -3,25 +3,10 @@ import { useState } from "react";
 import { FaTooth } from "react-icons/fa";
 import { LoginForm } from "./user/LoginForm";
 import { SignupForm } from "./user/SignupForm";
-import {AiOutlineClose} from "react-icons/ai"
+import { AiOutlineClose } from "react-icons/ai";
 export const Navbar = () => {
   const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
   const [isSignupFormVisible, setIsSignupFormVisible] = useState(false);
-
-  const handleLoginClick = () => {
-    setIsLoginFormVisible(true);
-    setIsSignupFormVisible(false);
-  };
-
-  const handleSignupClick = () => {
-    setIsSignupFormVisible(true);
-    setIsLoginFormVisible(false);
-  };
-
-  const closeForms = () => {
-    setIsLoginFormVisible(false);
-    setIsSignupFormVisible(false);
-  };
 
   return (
     <nav className="w-full z-10 bg-blue-200 shadow-lg">
@@ -35,13 +20,19 @@ export const Navbar = () => {
           </div>
           <div className="flex items-center">
             <button
-              onClick={handleLoginClick}
+              onClick={() => {
+                setIsLoginFormVisible(true);
+                setIsSignupFormVisible(false);
+              }}
               className="bg-white text-blue-500 hover:text-blue-700 rounded-md font-medium py-2 px-4 mr-2"
             >
               Log in
             </button>
             <button
-              onClick={handleSignupClick}
+              onClick={() => {
+                setIsSignupFormVisible(true);
+                setIsLoginFormVisible(false);
+              }}
               className="bg-white text-blue-500 hover:text-blue-700 rounded-md font-medium py-2 px-4"
             >
               Sign up
@@ -55,10 +46,13 @@ export const Navbar = () => {
           <div className="bg-white relative rounded-lg p-8 shadow-lg">
             <LoginForm />
             <button
-              onClick={closeForms}
+              onClick={() => {
+                setIsLoginFormVisible(false);
+                setIsSignupFormVisible(false);
+              }}
               className="top-0 right-0 mr-6 absolute bg-red-500 text-white hover:bg-red-700 rounded-md font-medium py-2 px-4 mt-4"
             >
-              <AiOutlineClose/>
+              <AiOutlineClose />
             </button>
           </div>
         </div>
@@ -69,10 +63,13 @@ export const Navbar = () => {
           <div className="bg-white relative rounded-lg p-8 shadow-lg">
             <SignupForm />
             <button
-              onClick={closeForms}
+              onClick={() => {
+                setIsLoginFormVisible(false);
+                setIsSignupFormVisible(false);
+              }}
               className="top-0 right-0 mr-6 absolute bg-red-500 text-white hover:bg-red-700 rounded-md font-medium py-2 px-4 mt-4"
             >
-              <AiOutlineClose/>
+              <AiOutlineClose />
             </button>
           </div>
         </div>

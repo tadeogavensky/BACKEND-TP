@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT u FROM User u WHERE u.deleted=false")
     List<User> findAllNotDeleted();
-    @Query("SELECT u FROM User u WHERE u.username = ?1 AND u.password = ?2")
+    @Query("SELECT u FROM User u WHERE u.username = ?1 AND u.password = ?2 AND u.deleted = false")
     User findByUsernameAndPassword(String username, String password);
 
 

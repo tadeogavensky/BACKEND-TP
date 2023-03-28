@@ -1,6 +1,7 @@
 package com.example.backend_v2.controllers;
 
 import com.example.backend_v2.entities.Address;
+import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.AddressService;
 import com.example.backend_v2.services.PatientService;
@@ -73,7 +74,7 @@ public class PatientController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable(value = "id") Long patientId,
+    public ResponseEntity<String> updatePatient(@PathVariable(value = "id") Long patientId,
                                                  @RequestBody Patient patientDetails) {
 
         System.out.println(patientId);
@@ -82,6 +83,15 @@ public class PatientController {
         if (patient.isEmpty()) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found for this id :: " + patientId);
         }
+
+        List<Patient> patientList = patientService.findAllNotDeleted();
+
+        for (int i = 0; i < patientList.size(); i++) {
+            if (patientList.get(i).getDni() == patientDetails.getDni()){
+                return  ResponseEntity.status(HttpStatus.FOUND).body("Already a patient with that DNI!");
+            }
+        }
+
 
         Patient patientFound = patient.get();
 
@@ -117,7 +127,7 @@ public class PatientController {
         }
 
         Patient updatedPatient = patientService.save(patientFound);
-        return ResponseEntity.ok(updatedPatient);
+        return ResponseEntity.ok("Updated patient "+updatedPatient);
 
 
     }

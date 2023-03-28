@@ -14,11 +14,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment,Long> {
     @Query("SELECT a FROM Appointment a WHERE a.deleted=false")
     List<Appointment> findAllNotDeleted();
 
-    @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId")
+    @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId AND a.deleted = false")
     List<Appointment> findByPatientId(@Param("patientId") Long patientId);
 
 
-    @Query("SELECT a FROM Appointment a WHERE a.dentist.id = :dentistId")
+    @Query("SELECT a FROM Appointment a WHERE a.dentist.id = :dentistId AND a.deleted = false")
     List<Appointment> findByDentistId(@Param("dentistId") Long dentistId);
 
 }
