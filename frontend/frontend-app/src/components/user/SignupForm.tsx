@@ -10,23 +10,23 @@ export const SignupForm = () => {
   const [isAdmin, setIsAdmin] = useState(false);
  
 
-  const handleUsernameChange = (e) => {
+  const handleUsernameChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setUsername(e.target.value);
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setPassword(e.target.value);
   };
 
-  const handleConfirmPasswordChange = (e) => {
+  const handleConfirmPasswordChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setConfirmPassword(e.target.value);
   };
 
-  const handleAdminChange = (e) => {
+  const handleAdminChange = (e: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
     setIsAdmin(e.target.checked);
   };
 
-  const submitForm = (e) => {
+  const submitForm = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     const Toast = Swal.mixin({
       toast: true,

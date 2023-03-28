@@ -8,16 +8,6 @@ export const AdminMenu = () => {
     const [optAppointment, setOptAppointment] = useState(false);
     const [optDP, setOptDP] = useState(false);
   
-  
-    const handleOptAppointment = () => {
-      setOptAppointment(true);
-      setOptDP(false);
-    };
-  
-    const handleDPAppointment = () => {
-      setOptAppointment(false);
-      setOptDP(true);
-    };
 
   return (
     <>

@@ -46,7 +46,7 @@ public class PatientController {
     }
 
     @GetMapping(path = "/byDNI")
-    public ResponseEntity<?> findByDNI(@RequestBody int DNI) {
+    public ResponseEntity<?> findByDNI(@PathVariable("dni") int DNI) {
         return ResponseEntity.ok(patientService.findByDNI(DNI));
     }
 

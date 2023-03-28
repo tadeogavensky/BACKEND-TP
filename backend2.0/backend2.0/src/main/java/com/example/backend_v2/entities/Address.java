@@ -19,7 +19,7 @@ public class Address {
     private String state;
 
 
-    @Column(name = "deleted", nullable = false)
+    @Column(name = "deleted")
     private Boolean deleted;
 
 

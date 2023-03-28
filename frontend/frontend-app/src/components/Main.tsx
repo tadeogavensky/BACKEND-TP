@@ -1,17 +1,16 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import banner from "../assets/img/hero-banner.jpg";
 import { Appoitment } from "./Clinic/Appoitment";
 import { DentistTable } from "./Clinic/DentistTable";
 import PatientTable from "./Clinic/PatientTable";
-
+import {User} from "@/types/User";
 export const Main = () => {
-  let username = "Tadeo";
-
   const [optAppointment, setOptAppointment] = useState(false);
   const [optDP, setOptDP] = useState(false);
 
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState<Partial<User>>({});
+
+ 
 
   const handleOptAppointment = () => {
     setOptAppointment(true);

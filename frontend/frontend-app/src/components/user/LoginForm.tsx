@@ -1,4 +1,5 @@
 import axios from "axios";
+import React from "react";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
@@ -8,15 +9,15 @@ export const LoginForm = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleusernameChange = (event) => {
+  const handleusernameChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setUsername(event.target.value);
   };
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
 
     const Toast = Swal.mixin({

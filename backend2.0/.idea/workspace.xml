@@ -7,8 +7,8 @@
     <list default="true" id="70c48259-02fb-4c0b-afd7-2d7f92e37d0d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/PatientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/PatientController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/Appoitment.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/Appoitment.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/PatientTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/PatientTable.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/entities/Address.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/entities/Address.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/Appoitment.jsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

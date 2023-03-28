@@ -3,31 +3,39 @@ import axios from "axios";
 
 import { BsPencil } from "react-icons/bs";
 import Swal from "sweetalert2";
+import { Patient } from "@/types/Patient";
+import { Dentist } from "@/types/Dentist";
+import { Appointment } from "@/types/Appointment";
 
 export const Appoitment = () => {
-  const [appointments, setAppointments] = useState([]);
-  const [patients, setPatients] = useState([]);
-  const [dentists, setDentists] = useState([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [dentists, setDentists] = useState<Dentist[]>([]);
 
-  const [dentist, setSelectedDentist] = useState({});
-  const [patient, setSelectedPatient] = useState({});
-  const [dateString, setSelectedDateTime] = useState();
+  const [patient, setSelectedPatient] = useState<Partial<Patient>>({});
+  const [dentist, setSelectedDentist] = useState<Partial<Patient>>({});
+
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [appointmentBody, setAppointmentBody] = useState({});
 
+  const [showForm, setShowForm] = useState(false);
 
+  const [dateString, setSelectedDateTime] = useState();
 
-
-
-  const handleSelectDentist = (event) => {
-    /*  console.log("handleSelectDentist :>> ", JSON.parse(event.target.value)); */
-    setSelectedDentist(JSON.parse(event.target.value));
+  const handleSelectDentist = (event: {
+    target: { value: React.SetStateAction<{}> };
+  }) => {
+    setSelectedDentist(event.target.value);
   };
 
-  const handleSelectPatient = (event) => {
-    setSelectedPatient(JSON.parse(event.target.value));
+  const handleSelectPatient = (event: {
+    target: { value: React.SetStateAction<{}> };
+  }) => {
+    setSelectedPatient(event.target.value);
   };
 
-  const handleSelectDate = (event) => {
+  const handleSelectDate = (event: {
+    target: { value: React.SetStateAction<undefined> };
+  }) => {
     setSelectedDateTime(event.target.value);
   };
 
@@ -51,33 +59,27 @@ export const Appoitment = () => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
         setDentists(data.data);
-        /*     console.log('dentists :>> ', dentists); */
       })
       .catch((error) => {
         console.error(error.data.config.data);
       });
   };
 
-  const fetchAppointments = () => {
+  const fetchAppointments = (): void => {
     axios
-      .get("http://localhost:9000/api/v1/appointment/findAll")
+      .get<{ data: Appointment[] }>(
+        "http://localhost:9000/api/v1/appointment/findAll"
+      )
       .then((res) => {
-        let json = JSON.stringify(res);
-        let data = JSON.parse(json);
-        data.data.forEach((appointment) => {
-          const date = new Date(
-            appointment.dateTime[0],
-            appointment.dateTime[1] - 1,
-            appointment.dateTime[2],
-            appointment.dateTime[3],
-            appointment.dateTime[4]
-          );
-          appointment.dateTime = date.toLocaleString();
+        const data = res.data.data;
+        data.forEach((application) => {
+          const date = new Date(application.dateTime);
+          application.dateTime = date;
         });
-        setAppointments(data.data);
+        setAppointments(data);
       })
       .catch((error) => {
-        /*  console.error(error.data.config); */
+        /*  console.error(error.config); */
       });
   };
 
@@ -87,7 +89,7 @@ export const Appoitment = () => {
     fetchAppointments();
   }, []);
 
-  const saveAppointment = (event) => {
+  const saveAppointment = (event: { preventDefault: () => void }) => {
     setAppointmentBody({
       patient,
       dentist,
@@ -110,7 +112,6 @@ export const Appoitment = () => {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-    
     });
 
     event.preventDefault();
@@ -154,129 +155,119 @@ export const Appoitment = () => {
     }
   };
 
-  const showForm = () => {
-    let form = document.getElementById("form-appointment-container");
-    form.style.display = "flex";
-  };
-
-  const hideForm = () => {
-    let form = document.getElementById("form-appointment-container");
-    form.style.display = "none";
-  };
-
   return (
     <div className=" flex flex-col justify-center space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-lg">Latest appoitnments</h1>
         <button
           onClick={() => {
-            showForm();
+            setShowForm(true)
           }}
           className="inline-block rounded bg-blue-400 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-blue-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-blue-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-blue-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)]"
         >
           NEW APPOINTMENT
         </button>
       </div>
+      {showForm && (
+        <div
+          id="form-appointment-container"
+          className="hidden fixed inset-0 items-center justify-center bg-gray-800 bg-opacity-75 "
+          style={{ marginTop: "0" }}
+        >
+          <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
+            <h2 className="text-lg font-medium mb-4">New appointment</h2>
+            <form
+              className="space-y-4"
+              onSubmit={saveAppointment}
+              id="appointmentForm"
+            >
+              <div className="flex flex-col">
+                <label className="mb-1 font-medium">
+                  Patient
+                </label>
+                <select
+                  id="patient"
+                  name="patient"
+                  className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                  value={patient}
+                  onChange={handleSelectPatient}
+                  onBlur={handleSelectPatient}
+                  onFocus={handleSelectPatient}
+                >
+                  <option value={patient} defaultValue>
+                    Select patient
+                  </option>
+                  {patients.map((patient) => {
+                    return (
+                      <option value={JSON.stringify(patient)}>
+                        {patient.lastName}, {patient.firstName}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label className="mb-1 font-medium">
+                  Dentist
+                </label>
+                <select
+                  id="dentist"
+                  name="dentist"
+                  className="rounded-lg border-gray-400 border-solid border py-2 px-4"
+                  value={dentist}
+                  onChange={handleSelectDentist}
+                  onBlur={handleSelectDentist}
+                  onFocus={handleSelectDentist}
+                >
+                  <option value="" defaultValue>
+                    Select dentist
+                  </option>
 
-      <div
-        id="form-appointment-container"
-        className="hidden fixed inset-0 items-center justify-center bg-gray-800 bg-opacity-75 "
-        style={{ marginTop: "0" }}
-      >
-        <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
-          <h2 className="text-lg font-medium mb-4">New appointment</h2>
-          <form
-            className="space-y-4"
-            onSubmit={saveAppointment}
-            id="appointmentForm"
-          >
-            <div className="flex flex-col">
-              <label className="mb-1 font-medium" for="patient">
-                Patient
-              </label>
-              <select
-                id="patient"
-                name="patient"
-                className="rounded-lg border-gray-400 border-solid border py-2 px-3"
-                value={patient}
-                onChange={handleSelectPatient}
-                onBlur={handleSelectPatient}
-                onFocus={handleSelectPatient}
-              >
-                <option value={patient} defaultValue={patient}>
-                  Select patient
-                </option>
-                ;
-                {patients.map((patient) => {
-                  return (
-                    <option value={JSON.stringify(patient)}>
-                      {patient.lastName}, {patient.firstName}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label className="mb-1 font-medium" for="dentist">
-                Dentist
-              </label>
-              <select
-                id="dentist"
-                name="dentist"
-                className="rounded-lg border-gray-400 border-solid border py-2 px-4"
-                value={dentist}
-                onChange={handleSelectDentist}
-                onBlur={handleSelectDentist}
-                onFocus={handleSelectDentist}
-              >
-                <option value="" defaultValue>
-                  Select dentist
-                </option>
-
-                {dentists.map((dentist) => {
-                  return (
-                    <option value={JSON.stringify(dentist)}>
-                      Dr. {dentist.lastName}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label className="mb-1 font-medium" for="date">
-                Date
-              </label>
-              <input
-                id="date"
-                name="date"
-                type="datetime-local"
-                className="rounded-lg border-gray-400 border-solid border py-2 px-3"
-                value={dateString}
-                onSubmit={handleSelectDate}
-                onChange={handleSelectDate}
-                onBlur={handleSelectDate}
-              />
-            </div>
-            <div className="flex justify-start">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-2 px-4 w-full"
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg py-2 px-4"
-                onClick={() => {
-                  hideForm();
-                }}
-              >
-                Close
-              </button>
-            </div>
-          </form>
+                  {dentists.map((dentist) => {
+                    return (
+                      <option value={JSON.stringify(dentist)}>
+                        Dr. {dentist.lastName}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label className="mb-1 font-medium">
+                  Date
+                </label>
+                <input
+                  id="date"
+                  name="date"
+                  type="datetime-local"
+                  className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                  value={dateString}
+                  onSubmit={handleSelectDate}
+                  onChange={handleSelectDate}
+                  onBlur={handleSelectDate}
+                />
+              </div>
+              <div className="flex justify-start">
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-2 px-4 w-full"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg py-2 px-4"
+                  onClick={() => {
+                    setShowForm(false)
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="w-full">
         <div className="bg-white shadow-md rounded my-2">
@@ -315,7 +306,6 @@ export const Appoitment = () => {
                         <button
                           type="button"
                           className="inline-block rounded bg-orange-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-orange-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-orange-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-orange-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
-                       
                         >
                           <BsPencil />
                         </button>
@@ -326,8 +316,6 @@ export const Appoitment = () => {
               })}
             </tbody>
           </table>
-
-    
         </div>
       </div>
     </div>
