@@ -14,7 +14,9 @@ export const Appoitment = () => {
   const [showForm, setShowForm] = useState(false);
 
 
-  
+  const [patient, setPatient] = useState<Patient>();
+  const [dentist, setDentist] = useState<Dentist>();
+
 
   const [appointment, setAppointment] = useState<Appointment>({
   id: 0,
@@ -108,16 +110,23 @@ export const Appoitment = () => {
   }, []);
 
   const saveAppointment = (event: { preventDefault: () => void }) => {
-    console.log("appointment :>> ", appointment);
+ 
+
+
+    setPatient(appointment.patient);
+    setDentist(appointment.dentist);
+
 
     const payload = {
       appointment: {
-        dentist: JSON.stringify(appointment.dentist),
-        patient: JSON.stringify(appointment.patient),
+        dentist,
+        patient,
       },
       dateString,
       deleted: false,
     };
+
+    console.log("appointment :>> ", payload);
 
     const Toast = Swal.mixin({
       toast: true,
@@ -129,7 +138,6 @@ export const Appoitment = () => {
 
     event.preventDefault();
 
-    console.log(payload);
 
     if (!appointment.patient) {
       Toast.fire({

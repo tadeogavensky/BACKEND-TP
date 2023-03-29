@@ -286,9 +286,9 @@ const PatientTable = () => {
   }, []);
 
   return (
-    <div className="w-full">
-      <div className=" my-2">
-        <div className="flex justify-between items-center mb-4">
+  
+    <div className=" flex  flex-col justify-center space-y-6">
+    <div className="flex  justify-between items-center">
           <h1 className="text-lg">Patients</h1>
           <button
             onClick={() => {
@@ -486,7 +486,7 @@ const PatientTable = () => {
               <th className="py-3 px-4 text-left">Last name</th>
               <th className="py-3 px-4 text-left">First name</th>
               <th className="py-3 px-4 text-left">DNI</th>
-              <th className="py-3 px-4 text-left">Address</th>
+              <th className="py-3 px-4 text-center w-[20px] ">Address</th>
               <th className="py-3 px-4">Settings</th>
             </tr>
           </thead>
@@ -498,7 +498,7 @@ const PatientTable = () => {
                   <td className="py-3 px-4 text-left">{patient.lastName}</td>
                   <td className="py-3 px-4 text-left">{patient.firstName}</td>
                   <td className="py-3 px-4 text-left">{patient.dni}</td>
-                  <td className="py-3 px-12 w-full text-left text-[11px]">
+                  <td className="py-3 px-12 text-left w-[20px] text-[11px]">
                     {patient.address.street},{patient.address.number},
                     {patient.address.zipcode},{patient.address.state}
                   </td>
@@ -519,16 +519,17 @@ const PatientTable = () => {
                       <button
                         type="button"
                         className="inline-block rounded bg-red-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-red-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-red-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-red-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
-                        onClick={() => patient.id !== undefined && handlePatientDelete(patient.id)}
+                        onClick={() =>
+                          patient.id !== undefined &&
+                          handlePatientDelete(patient.id)
+                        }
                       >
                         <AiOutlineClose />
                       </button>
                     </td>
                   </td>
 
-                  <td className="flex justify-center items-center align-middle">
-                  
-                  </td>
+                  <td className="flex justify-center items-center align-middle"></td>
                 </tr>
               );
             })}
@@ -677,7 +678,6 @@ const PatientTable = () => {
           </div>
         )}
       </div>
-    </div>
   );
 };
 

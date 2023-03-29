@@ -3,14 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Appoitment } from "./Clinic/Appoitment";
 import { DentistTable } from "./Clinic/DentistTable";
 import PatientTable from "./Clinic/PatientTable";
-import {User} from "@/types/User";
+import { User } from "@/types/User";
 export const Main = () => {
   const [optAppointment, setOptAppointment] = useState(false);
   const [optDP, setOptDP] = useState(false);
 
   const [user, setUser] = useState<Partial<User>>({});
-
- 
 
   const handleOptAppointment = () => {
     setOptAppointment(true);
@@ -23,28 +21,24 @@ export const Main = () => {
   };
 
   const getLoggedUser = () => {
-  let token =  sessionStorage.getItem("token")
-  console.log('token :>> ', token);
+    let token = sessionStorage.getItem("token");
+    console.log("token :>> ", token);
     axios
-      .post(
-        "http://localhost:8090/api/v1/user/details",
-        {token}
-      )
+      .post("http://localhost:8090/api/v1/user/details", { token })
       .then((res) => {
         console.log("res from userDetails :>> ", res);
-        setUser(res.data)
-        return user
+        setUser(res.data);
+        return user;
       });
   };
 
   useEffect(() => {
-    getLoggedUser()
-  }, [])
-  
+    getLoggedUser();
+  }, []);
 
   return (
-    <div className="flex flex-col md:flex-row mt-8">
-      <div className="flex flex-col h-full  justify-center items-center md:w-1/2 mt-8">
+    <div className="flex flex-col mt-8 w-full">
+      <div className="flex flex-col h-full flex-wrap justify-center items-center mt-8">
         <h1 className="text-4xl font-bold text-blue-600 p-2 pl-4 pr-4 mb-6">
           Welcome {user.username}
         </h1>
@@ -61,12 +55,11 @@ export const Main = () => {
           Manage appointments
         </button>
       </div>
-      <div className="md:w-1/2 md:flex m-8">
+      <div className="p-12">
         {optAppointment && <Appoitment />}
-        <div className="flex flex-row items-center w-full flex-wrap">
-          {optDP && <PatientTable />}
-          {optDP && <DentistTable />}
-        </div>
+
+        {optDP && <PatientTable />}
+        {optDP && <DentistTable />}
       </div>
     </div>
   );

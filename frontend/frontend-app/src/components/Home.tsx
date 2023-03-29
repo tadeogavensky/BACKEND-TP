@@ -18,7 +18,7 @@ export const Home: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <Navbar />
       <Main />
     </div>
