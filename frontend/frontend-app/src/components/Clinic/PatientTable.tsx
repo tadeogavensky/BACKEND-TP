@@ -286,7 +286,6 @@ const PatientTable = () => {
   }, []);
 
   return (
-  
     <div className=" flex  flex-col justify-center space-y-6">
     <div className="flex  justify-between items-center">
           <h1 className="text-lg">Patients</h1>

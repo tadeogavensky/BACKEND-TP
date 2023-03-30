@@ -1,7 +1,6 @@
 package com.example.backend_v2.controllers;
 
 import com.example.backend_v2.entities.Appointment;
-import com.example.backend_v2.entities.AppointmentRequest;
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
 import com.example.backend_v2.services.AppointmentService;
@@ -55,19 +54,22 @@ public class AppointmentController {
 
 
     @PostMapping(path = "/", consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody AppointmentRequest payload) {
-        System.out.println("DATETIME" + payload.getDateString());
-        Appointment appointment = payload.getAppointment();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        LocalDateTime dateTimeFormatted = LocalDateTime.parse(payload.getDateString(), formatter);
-        System.out.println("FORMATTED DATE " + dateTimeFormatted);
-        appointment.setDateTime(dateTimeFormatted);
-        System.out.println("FORMATTED DATE IN CLASS " + appointment.getDateTime());
+    public ResponseEntity<?> save(@RequestBody Appointment payload) {
+        System.out.println(payload);
+        System.out.println("DATETIME" + payload.getDateTime());
 
 
-        Optional<Dentist> dentist = dentistService.findById(appointment.getDentist().getId());
-        Optional<Patient> patient = patientService.findById(appointment.getPatient().getId());
+
+        Appointment findByDateTime = appointmentService.findByDateTime(payload.getDateTime());
+
+        if (findByDateTime != null) {
+            System.out.println("EXISTE TURNO MISMA HORA");
+            return ResponseEntity.status(HttpStatus.FOUND).body("There is already an appointment at that time");
+        }
+
+
+        Optional<Dentist> dentist = dentistService.findById(payload.getDentist().getId());
+        Optional<Patient> patient = patientService.findById(payload.getPatient().getId());
 
         if (patient.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
@@ -78,19 +80,19 @@ public class AppointmentController {
         }
 
 
-        appointment.setDentist(dentist.get());
-        appointment.setPatient(patient.get());
+        payload.setDentist(dentist.get());
+        payload.setPatient(patient.get());
 
-        Appointment appointment1 = appointmentService.save(appointment);
+        Appointment appointment1 = appointmentService.save(payload);
         System.out.println("TURNO RECIEN CREADO " + appointment1);
-        return ResponseEntity.ok(appointmentService.findById(appointment.getId()));
+        return ResponseEntity.ok(appointmentService.findById(payload.getId()));
 
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(@PathVariable(value = "id") Long appointmentId,
-                                                         @RequestBody AppointmentRequest appointmentDetails) {
+                                                         @RequestBody Appointment appointmentDetails) {
 
         Optional<Appointment> appointment = appointmentService.findById(appointmentId);
 
@@ -103,25 +105,23 @@ public class AppointmentController {
 
         IsNull isNull = new IsNull();
 
-        boolean existDentist = isNull.isNull(appointmentDetails.getAppointment().getDentist());
-        boolean existPatient = isNull.isNull(appointmentDetails.getAppointment().getPatient());
-        boolean existAssisted = isNull.isNull(appointmentDetails.getAppointment().isAssisted());
-        boolean existDateTime = isNull.isNull(appointmentDetails.getDateString());
+        boolean existDentist = isNull.isNull(appointmentDetails.getDentist());
+        boolean existPatient = isNull.isNull(appointmentDetails.getPatient());
+        boolean existAssisted = isNull.isNull(appointmentDetails.isAssisted());
+        boolean existDateTime = isNull.isNull(appointmentDetails.getDateTime());
 
         if (!existDentist) {
-            System.out.println("EXISTE DENTISTA? " + appointmentDetails.getAppointment().getDentist());
-            appointmentFound.setDentist(appointmentDetails.getAppointment().getDentist());
+            System.out.println("EXISTE DENTISTA? " + appointmentDetails.getDentist());
+            appointmentFound.setDentist(appointmentDetails.getDentist());
         }
         if (!existPatient) {
-            appointmentFound.setPatient(appointmentDetails.getAppointment().getPatient());
+            appointmentFound.setPatient(appointmentDetails.getPatient());
         }
         if (!existAssisted) {
-            appointmentFound.setAssisted(appointmentDetails.getAppointment().isAssisted());
+            appointmentFound.setAssisted(appointmentDetails.isAssisted());
         }
         if (!existDateTime) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-            LocalDateTime dateTimeFormatted = LocalDateTime.parse(appointmentDetails.getDateString(), formatter);
-            appointmentFound.setDateTime(dateTimeFormatted);
+            appointmentFound.setDateTime(appointmentDetails.getDateTime());
         }
 
         Appointment updatedAppointment = appointmentService.save(appointmentFound);

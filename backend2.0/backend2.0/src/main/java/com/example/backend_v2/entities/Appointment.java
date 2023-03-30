@@ -13,7 +13,7 @@ public class Appointment {
     private Long id;
 
     @Column(name = "date_time")
-    private LocalDateTime date_time;
+    private LocalDateTime dateTime;
 
     /*    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})*/
     @ManyToOne(fetch = FetchType.EAGER)
@@ -30,10 +30,10 @@ public class Appointment {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    public Appointment(LocalDateTime date_time, Patient patient, Dentist dentist, boolean assisted) {
+    public Appointment(LocalDateTime dateTime, Patient patient, Dentist dentist, boolean assisted) {
         this.patient = patient;
         this.dentist = dentist;
-        this.date_time = date_time;
+        this.dateTime = dateTime;
         this.assisted = false;
         this.deleted = false;
     }
@@ -46,11 +46,11 @@ public class Appointment {
     }
 
     public LocalDateTime getDateTime() {
-        return date_time;
+        return dateTime;
     }
 
-    public void setDateTime(LocalDateTime date_time) {
-        this.date_time = date_time;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     public Dentist getDentist() {
@@ -90,7 +90,7 @@ public class Appointment {
     public String toString() {
         return "Appointment{" +
                 "id=" + id +
-                ", date_time=" + date_time +
+                ", dateTime=" + dateTime +
                 ", dentist=" + dentist +
                 ", patient=" + patient +
                 ", deleted=" + deleted +

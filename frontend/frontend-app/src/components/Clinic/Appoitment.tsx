@@ -11,31 +11,23 @@ export const Appoitment = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [dentists, setDentists] = useState<Dentist[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+
   const [showForm, setShowForm] = useState(false);
 
-
-  const [patient, setPatient] = useState<Patient>();
-  const [dentist, setDentist] = useState<Dentist>();
-
-
   const [appointment, setAppointment] = useState<Appointment>({
-  id: 0,
-  dentist: {} as Dentist,
-  patient: {} as Patient,
-  dateTime: "",
-  assisted: false,
-});
-
-
-  const [dateString, setSelectedDateTime] = useState();
-
+    id: 0,
+    dentist: {} as Dentist,
+    patient: {} as Patient,
+    dateTime: "",
+    assisted: false,
+  });
 
   function handleAppointmentChange(
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) {
     const { name, value } = event.target;
     const { patient, dentist } = appointment;
-  
+
     setAppointment((prevAppointment) => ({
       ...prevAppointment,
       [name]: value,
@@ -49,9 +41,7 @@ export const Appoitment = () => {
       },
     }));
   }
-  
 
-  
   const updateField = (
     field: keyof Dentist | keyof Patient | keyof Appointment,
     value: number | string
@@ -89,44 +79,36 @@ export const Appoitment = () => {
       });
   };
 
-  const fetchAppointments = (): void => {
-    axios
-      .get<{ data: Appointment[] }>(
-        "http://localhost:9010/api/v1/appointment/findAll"
-      )
-      .then((res) => {
-        console.log('res :>> ', res.data);
-        setAppointments(res.data.data);
-      })
-      .catch((error) => {
-        /*  console.error(error.config); */
-      });
-  };
-
-  useEffect(() => {
-    fetchDentists();
-    fetchPatients();
-    fetchAppointments();
-  }, []);
-
-  const saveAppointment = (event: { preventDefault: () => void }) => {
- 
-
-
-    setPatient(appointment.patient);
-    setDentist(appointment.dentist);
-
-
-    const payload = {
-      appointment: {
-        dentist,
-        patient,
-      },
-      dateString,
-      deleted: false,
+  const fetchAppointments = () => {
+    const formattedDate = (dateArray: (string | number)[]) => {
+      return `${dateArray[0]}-${
+        (dateArray[1] < 10 ? "0" : "") + dateArray[1]
+      }-${(dateArray[2] < 10 ? "0" : "") + dateArray[2]} ${
+        (dateArray[3] < 10 ? "0" : "") + dateArray[3]
+      }:${(dateArray[4] < 10 ? "0" : "") + dateArray[4]}:00`;
     };
 
-    console.log("appointment :>> ", payload);
+    fetch("http://localhost:9010/api/v1/appointment/findAll")
+      .then((response) => response.json())
+      .then((data) => {
+        const formattedAppointments = data.map(
+          (appointment: { dateTime: (string | number)[] }) => {
+            return {
+              ...appointment,
+              dateTime: formattedDate(appointment.dateTime),
+            };
+          }
+        );
+        setAppointments(formattedAppointments);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const saveAppointment = (event: { preventDefault: () => void }) => {
+    const { patient, dentist, dateTime } = appointment;
+    if (!dentist || !patient || !dateTime) {
+      return false;
+    }
 
     const Toast = Swal.mixin({
       toast: true,
@@ -138,25 +120,24 @@ export const Appoitment = () => {
 
     event.preventDefault();
 
-
-    if (!appointment.patient) {
+    if (!patient) {
       Toast.fire({
         icon: "error",
         title: "Please select a patient",
       });
-    } else if (!appointment.dentist) {
+    } else if (!dentist) {
       Toast.fire({
         icon: "error",
         title: "Please select a dentist",
       });
-    } else if (dateString == "") {
+    } else if (!dateTime) {
       Toast.fire({
         icon: "error",
         title: "Please select a date",
       });
     } else {
       axios
-        .post("http://localhost:9010/api/v1/appointment/", payload)
+        .post("http://localhost:9010/api/v1/appointment/", appointment)
         .then((res) => {
           if (res.status === 200) {
             Toast.fire({
@@ -174,6 +155,12 @@ export const Appoitment = () => {
         });
     }
   };
+
+  useEffect(() => {
+    fetchDentists();
+    fetchPatients();
+    fetchAppointments();
+  }, []);
 
   return (
     <div className=" flex flex-col justify-center space-y-6">
@@ -211,13 +198,10 @@ export const Appoitment = () => {
                   className="rounded-lg border-gray-400 border-solid border py-2 px-3"
                   value={JSON.stringify(appointment.patient)}
                   onChange={(event) => {
-                    setAppointment((prevAppointment) => ({
-                      ...prevAppointment,
-                      patient: {
-                        ...prevAppointment.patient,
-                        patient: event.target.value,
-                      },
-                    }));
+                    setAppointment({
+                      ...appointment,
+                      patient: JSON.parse(event.target.value),
+                    });
                   }}
                 >
                   <option value="">Select patient</option>
@@ -238,13 +222,10 @@ export const Appoitment = () => {
                   className="rounded-lg border-gray-400 border-solid border py-2 px-4"
                   value={JSON.stringify(appointment.dentist)}
                   onChange={(event) => {
-                    setAppointment((prevAppointment) => ({
-                      ...prevAppointment,
-                      dentist: {
-                        ...prevAppointment.dentist,
-                        dentist: event.target.value,
-                      },
-                    }));
+                    setAppointment({
+                      ...appointment,
+                      dentist: JSON.parse(event.target.value),
+                    });
                   }}
                 >
                   <option value="">Select dentist</option>
@@ -310,7 +291,7 @@ export const Appoitment = () => {
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
-            {appointments?.map((appointment) => {
+              {appointments.map((appointment) => {
                 return (
                   <tr className="border-b border-gray-200 hover:bg-gray-100 px-12">
                     <td className="py-3 px-5 text-left">{appointment.id}</td>
