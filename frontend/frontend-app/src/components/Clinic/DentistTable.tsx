@@ -334,7 +334,7 @@ export const DentistTable = () => {
                 <td className="py-3 px-4 text-center">
                   {dentist.registrationNumber}
                 </td>
-                <td className="flex justify-center items-center align-middle">
+                <td className="flex justify-center items-center align-middle my-2">
                   <td className="flex justify-center items-center align-middle mt-1">
                     <button
                       type="button"
@@ -349,7 +349,7 @@ export const DentistTable = () => {
                   </td>
                 </td>
 
-                <td className="flex justify-center items-center align-middle">
+                <td className="flex justify-center items-center align-middle my-2">
                   <td className="flex justify-center items-center align-middle mt-1">
                     <button
                       type="button"

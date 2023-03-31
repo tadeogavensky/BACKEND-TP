@@ -55,15 +55,9 @@ public class AppointmentController {
 
     @PostMapping(path = "/", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody Appointment payload) {
-        System.out.println(payload);
-        System.out.println("DATETIME" + payload.getDateTime());
-
-
-
         Appointment findByDateTime = appointmentService.findByDateTime(payload.getDateTime());
 
         if (findByDateTime != null) {
-            System.out.println("EXISTE TURNO MISMA HORA");
             return ResponseEntity.status(HttpStatus.FOUND).body("There is already an appointment at that time");
         }
 
@@ -111,7 +105,6 @@ public class AppointmentController {
         boolean existDateTime = isNull.isNull(appointmentDetails.getDateTime());
 
         if (!existDentist) {
-            System.out.println("EXISTE DENTISTA? " + appointmentDetails.getDentist());
             appointmentFound.setDentist(appointmentDetails.getDentist());
         }
         if (!existPatient) {

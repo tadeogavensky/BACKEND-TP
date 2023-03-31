@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { Patient } from "@/types/Patient";
 import { Dentist } from "@/types/Dentist";
 import { Appointment } from "@/types/Appointment";
+import { AiOutlineClose } from "react-icons/ai";
 
 export const Appoitment = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -13,6 +14,7 @@ export const Appoitment = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   const [showForm, setShowForm] = useState(false);
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   const [appointment, setAppointment] = useState<Appointment>({
     id: 0,
@@ -154,6 +156,86 @@ export const Appoitment = () => {
           });
         });
     }
+  };
+
+  const submitUpdateForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+
+    console.log("appointment.id :>> ", appointment.id);
+
+    axios
+      .put(
+        `http://localhost:9010/api/v1/appointment/${appointment.id}`,
+        appointment
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("res :>> ", res.data);
+          Toast.fire({
+            icon: "success",
+            title: "Appointment updated successfully",
+          });
+        }
+      })
+      .catch((error) => {
+        Toast.fire({
+          icon: "error",
+          title: error.response.data,
+        });
+      });
+  };
+
+  const handleAppointmentDelete = (id: number) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to delete the appointment with ID ${id}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        submitDelete(id);
+      } else {
+        return;
+      }
+    });
+  };
+  const submitDelete = (id: number) => {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+
+    axios
+      .delete(`http://localhost:9010/api/v1/appointment/${id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          Toast.fire({
+            icon: "success",
+            title: "Appointment deleted successfully",
+          });
+          window.location.href = "/";
+        }
+      })
+      .catch((error) => {
+        Toast.fire({
+          icon: "error",
+          title: error.response.data,
+        });
+      });
   };
 
   useEffect(() => {
@@ -308,14 +390,32 @@ export const Appoitment = () => {
                     <td className="py-3 px-4 text-left">
                       {appointment.assisted ? "YES" : "NO"}
                     </td>
-
-                    <td className="flex justify-center items-center align-middle">
+                    <td className="flex justify-center items-center align-middle my-2">
                       <td className="flex justify-center items-center align-middle mt-1">
                         <button
                           type="button"
                           className="inline-block rounded bg-orange-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-orange-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-orange-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-orange-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
+                          onClick={() => {
+                            setAppointment(appointment);
+                            setShowUpdateForm(true);
+                          }}
                         >
                           <BsPencil />
+                        </button>
+                      </td>
+                    </td>
+
+                    <td className="flex justify-center items-center align-middle my-2">
+                      <td className="flex justify-center items-center align-middle mt-1">
+                        <button
+                          type="button"
+                          className="inline-block rounded bg-red-500 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#e4a11b] transition duration-150 ease-in-out hover:bg-red-600 hover:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:bg-red-500-600 focus:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)] focus:outline-none focus:ring-0 active:bg-red-700 active:shadow-[0_8px_9px_-4px_rgba(228,161,27,0.3),0_4px_18px_0_rgba(228,161,27,0.2)]"
+                          onClick={() => {
+                            appointment.id !== undefined &&
+                              handleAppointmentDelete(appointment.id);
+                          }}
+                        >
+                          <AiOutlineClose />
                         </button>
                       </td>
                     </td>
@@ -324,6 +424,106 @@ export const Appoitment = () => {
               })}
             </tbody>
           </table>
+
+          {showUpdateForm && (
+            <div
+              id="form-update-appointment-container"
+              className="flex fixed inset-0 items-center justify-center bg-gray-800 bg-opacity-75 "
+              style={{ marginTop: "0" }}
+            >
+              <div className="bg-white p-6 mt-0 rounded-lg shadow-lg">
+                <h2 className="text-lg font-medium mb-4">Update appointment</h2>
+                <form
+                  className="space-y-4"
+                  onSubmit={submitUpdateForm}
+                  id="appointmentForm"
+                >
+                  <div className="flex flex-col">
+                    <label className="mb-1 font-medium">Patient</label>
+                    <select
+                      id="patient"
+                      name="patient"
+                      className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                      value={JSON.stringify(appointment.patient)}
+                      onChange={(event) => {
+                        setAppointment({
+                          ...appointment,
+                          patient: JSON.parse(event.target.value),
+                        });
+                      }}
+                    >
+                      <option value="">Select patient</option>
+                      {patients.map((patient) => {
+                        return (
+                          <option value={JSON.stringify(patient)}>
+                            {patient.lastName}, {patient.firstName}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-1 font-medium">Dentist</label>
+                    <select
+                      id="dentist"
+                      name="dentist"
+                      className="rounded-lg border-gray-400 border-solid border py-2 px-4"
+                      value={JSON.stringify(appointment.dentist)}
+                      onChange={(event) => {
+                        setAppointment({
+                          ...appointment,
+                          dentist: JSON.parse(event.target.value),
+                        });
+                      }}
+                    >
+                      <option value="">Select dentist</option>
+
+                      {dentists.map((dentist) => {
+                        return (
+                          <option value={JSON.stringify(dentist)}>
+                            Dr. {dentist.lastName}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-1 font-medium">Date</label>
+                    <input
+                      id="date"
+                      name="date"
+                      type="datetime-local"
+                      className="rounded-lg border-gray-400 border-solid border py-2 px-3"
+                      value={appointment.dateTime}
+                      onChange={(event) =>
+                        setAppointment({
+                          ...appointment,
+                          dateTime: event.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="flex justify-start">
+                    <button
+                      type="submit"
+                      className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-2 px-4 w-full"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg py-2 px-4"
+                      onClick={() => {
+                        setShowUpdateForm(false);
+                      }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
