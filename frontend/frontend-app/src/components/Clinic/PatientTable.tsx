@@ -90,7 +90,7 @@ const PatientTable = () => {
 
   const fetchPatients = () => {
     axios
-      .get("http://localhost:9010/api/v1/patient/findAll")
+      .get("http://localhost:9020/api/v1/patient/findAll")
       .then((response) => {
         const json = JSON.stringify(response);
         const data = JSON.parse(json);
@@ -113,7 +113,7 @@ const PatientTable = () => {
     });
 
     axios
-      .get(`http://localhost:9010/api/v1/patient/byDNI/${patient.dni}`)
+      .get(`http://localhost:9020/api/v1/patient/byDNI/${patient.dni}`)
       .then((res) => {
         updateField("firstName", res.data.firstName);
       });
@@ -135,7 +135,7 @@ const PatientTable = () => {
     } else {
       console.log("patient to update " + JSON.stringify(patient));
       axios
-        .put(`http://localhost:9010/api/v1/patient/${patient.id}`, patient)
+        .put(`http://localhost:9020/api/v1/patient/${patient.id}`, patient)
         .then((res) => {
           if (res.status === 200) {
             console.log("res :>> ", res.data);
@@ -189,7 +189,7 @@ const PatientTable = () => {
     } else {
       console.log("patient to submit ", patient);
       axios
-        .post("http://localhost:9010/api/v1/patient/", patient)
+        .post("http://localhost:9020/api/v1/patient/", patient)
         .then((res) => {
           if (res.status === 200) {
             Toast.fire({
@@ -262,7 +262,7 @@ const PatientTable = () => {
     });
 
     axios
-      .delete(`http://localhost:9010/api/v1/patient/${id}`)
+      .delete(`http://localhost:9020/api/v1/patient/${id}`)
       .then((res) => {
         if (res.status === 200) {
           console.log("res :>> ", res.data);

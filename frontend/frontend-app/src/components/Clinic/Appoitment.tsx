@@ -57,7 +57,7 @@ export const Appoitment = () => {
 
   const fetchPatients = () => {
     axios
-      .get("http://localhost:9010/api/v1/patient/findAll")
+      .get("http://localhost:9020/api/v1/patient/findAll")
       .then((res) => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
@@ -70,7 +70,7 @@ export const Appoitment = () => {
 
   const fetchDentists = () => {
     axios
-      .get("http://localhost:9010/api/v1/dentist/findAll")
+      .get("http://localhost:9020/api/v1/dentist/findAll")
       .then((res) => {
         let json = JSON.stringify(res);
         let data = JSON.parse(json);
@@ -90,7 +90,7 @@ export const Appoitment = () => {
       }:${(dateArray[4] < 10 ? "0" : "") + dateArray[4]}:00`;
     };
 
-    fetch("http://localhost:9010/api/v1/appointment/findAll")
+    fetch("http://localhost:9020/api/v1/appointment/findAll")
       .then((response) => response.json())
       .then((data) => {
         const formattedAppointments = data.map(
@@ -139,7 +139,7 @@ export const Appoitment = () => {
       });
     } else {
       axios
-        .post("http://localhost:9010/api/v1/appointment/", appointment)
+        .post("http://localhost:9020/api/v1/appointment/", appointment)
         .then((res) => {
           if (res.status === 200) {
             Toast.fire({
@@ -173,7 +173,7 @@ export const Appoitment = () => {
 
     axios
       .put(
-        `http://localhost:9010/api/v1/appointment/${appointment.id}`,
+        `http://localhost:9020/api/v1/appointment/${appointment.id}`,
         appointment
       )
       .then((res) => {
@@ -220,7 +220,7 @@ export const Appoitment = () => {
     });
 
     axios
-      .delete(`http://localhost:9010/api/v1/appointment/${id}`)
+      .delete(`http://localhost:9020/api/v1/appointment/${id}`)
       .then((res) => {
         if (res.status === 200) {
           Toast.fire({

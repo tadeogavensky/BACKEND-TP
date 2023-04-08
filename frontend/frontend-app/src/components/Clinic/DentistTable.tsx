@@ -54,7 +54,7 @@ export const DentistTable = () => {
 
   const fetchDentists = () => {
     axios
-      .get("http://localhost:9010/api/v1/dentist/findAll")
+      .get("http://localhost:9020/api/v1/dentist/findAll")
       .then((response) => {
         let json = JSON.stringify(response);
         let data = JSON.parse(json);
@@ -82,7 +82,7 @@ export const DentistTable = () => {
 
     axios
       .get(
-        `http://localhost:9010/api/v1/dentist/byRN/${dentist.registrationNumber}`
+        `http://localhost:9020/api/v1/dentist/byRN/${dentist.registrationNumber}`
       )
       .then((res) => {
         updateField("firstName", res.data.firstName);
@@ -95,7 +95,7 @@ export const DentistTable = () => {
       });
     } else {
       axios
-        .put(`http://localhost:9010/api/v1/dentist/${dentist.id}`, dentist)
+        .put(`http://localhost:9020/api/v1/dentist/${dentist.id}`, dentist)
         .then((res) => {
           if (res.status === 200) {
             console.log("res :>> ", res.data);
@@ -149,7 +149,7 @@ export const DentistTable = () => {
       });
     } else {
       axios
-        .post("http://localhost:9010/api/v1/dentist/", dentist)
+        .post("http://localhost:9020/api/v1/dentist/", dentist)
         .then((res) => {
           if (res.status === 200) {
             console.log("res :>> ", res.data);
@@ -197,7 +197,7 @@ export const DentistTable = () => {
     });
 
     axios
-      .delete(`http://localhost:9010/api/v1/dentist/${id}`)
+      .delete(`http://localhost:9020/api/v1/dentist/${id}`)
       .then((res) => {
         if (res.status === 200) {
           console.log("res :>> ", res.data);

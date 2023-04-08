@@ -48,7 +48,7 @@ export const SignupForm = () => {
     }
 
     axios
-      .post("http://localhost:9010/api/v1/user/signup", {
+      .post("http://localhost:9020/api/v1/user/signup", {
         username: user.username,
         password: user.password,
         role: user.role,

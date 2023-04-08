@@ -4,6 +4,7 @@ package com.example.backend_v2.controllers;
 import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
+import com.example.backend_v2.exceptions.CustomException;
 import com.example.backend_v2.services.DentistService;
 import com.example.backend_v2.utils.IsNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,36 +29,44 @@ public class DentistController {
     }*/
 
     @GetMapping(path = "/findAll")
-    public List<Dentist> findAllNotDeleted() {
-        return dentistService.findAllNotDeleted();
+    public List<Dentist> findAllNotDeleted() throws CustomException {
+        try {
+            return dentistService.findAllNotDeleted();
+        } catch (Exception e) {
+            throw new CustomException("Error occurred while finding dentists: " + e.getMessage());
+        }
     }
 
 
 
     @GetMapping(path = "/{id}")
-    public Optional<Dentist> findById(@PathVariable("id") Long id) {
-        return dentistService.findById(id);
+    public Optional<Dentist> findById(@PathVariable("id") Long id) throws CustomException {
+        Optional<Dentist> dentist = dentistService.findById(id);
+        if (dentist.isEmpty()) {
+            throw new CustomException("Dentist not found for this id :: " + id);
+        }
+        return dentist;
     }
 
-    @PostMapping(path = "/",consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody Dentist dentist) {
+    @PostMapping(path = "/", consumes = "application/json")
+    public ResponseEntity<?> save(@RequestBody Dentist dentist) throws CustomException {
         Dentist existingDentistByName = dentistService.findByRegistrationNumber(dentist.getRegistrationNumber());
-        Dentist existingDentistByRN = dentistService.findByDentist(dentist.getFirstName(),dentist.getLastName());
+        Dentist existingDentistByRN = dentistService.findByDentist(dentist.getFirstName(), dentist.getLastName());
 
         if (existingDentistByName != null) {
-            return ResponseEntity.status(HttpStatus.FOUND).body("Dentist already exists");
-        }else if(existingDentistByRN != null){
-            return ResponseEntity.status(HttpStatus.FOUND).body("Dentist already exists!");
-        }else{
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentist already exists!");
+            throw new CustomException("Dentist already exists");
+        } else if (existingDentistByRN != null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentist already exists!");
+            throw new CustomException("Dentist already exists!");
+        } else {
             dentistService.save(dentist);
             return ResponseEntity.ok(dentistService.findById(dentist.getId()));
-     }
+        }
     }
 
-@GetMapping(path = "/details")
-public Dentist getDentistBy(@RequestBody Dentist dentist) {
-    return dentistService.update(dentist);
-}
+
+
     @PutMapping("/{id}")
     public ResponseEntity<String> updateDentist(@PathVariable(value = "id") Long dentistId,
                                                  @RequestBody Dentist dentistDetails){

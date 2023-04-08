@@ -3,6 +3,7 @@ package com.example.backend_v2.controllers;
 import com.example.backend_v2.entities.Address;
 import com.example.backend_v2.entities.Dentist;
 import com.example.backend_v2.entities.Patient;
+import com.example.backend_v2.exceptions.CustomException;
 import com.example.backend_v2.services.AddressService;
 import com.example.backend_v2.services.PatientService;
 import com.example.backend_v2.utils.IsNull;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -36,31 +38,47 @@ public class PatientController {
         return patientService.findAll();
     }*/
 
+
     @GetMapping(path = "/findAll")
-    public List<Patient> findAllNotDeleted() {
-        return patientService.findAllNotDeleted();
+    public List<Patient> findAllNotDeleted() throws CustomException {
+        try {
+            return patientService.findAllNotDeleted();
+        } catch (Exception e) {
+            throw new CustomException("Error occurred while finding patients: " + e.getMessage());
+        }
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(patientService.findById(id));
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) throws CustomException {
+        Optional<Patient> patient = patientService.findById(id);
+        if (patient.isEmpty()) {
+            throw new CustomException("Patient with ID " + id + " not found");
+        }
+        return ResponseEntity.ok(patient.get());
     }
+
 
     @GetMapping(path = "/byDNI")
-    public ResponseEntity<?> findByDNI(@PathVariable("dni") int DNI) {
-        return ResponseEntity.ok(patientService.findByDNI(DNI));
+    public ResponseEntity<?> findByDNI(@PathVariable("dni") int DNI) throws CustomException {
+        Patient patient = patientService.findByDNI(DNI);
+        if (patient == null) {
+            throw new CustomException("Patient with DNI " + DNI + " not found");
+        }
+        return ResponseEntity.ok(patient);
     }
 
+
     @PostMapping(path = "/", consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody Patient patient) {
+    public ResponseEntity<?> save(@RequestBody Patient patient) throws CustomException {
 
         Patient existingPatient = patientService.findByDNI(patient.getDni());
         Optional<Address> existingAddress = addressService.findByAddress(patient.getAddress().getStreet(), patient.getAddress().getNumber(), patient.getAddress().getZipcode(), patient.getAddress().getState());
-        System.out.println("DIRECCION EXISTENTE " + existingAddress);
         if (existingPatient != null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient already exists!");
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient already exists!");
+            throw new CustomException("Patient already exists!");
         } else if (!StringUtils.isNumeric(String.valueOf(patient.getDni()))) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("DNI must be numeric");
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("DNI must be numeric");
+            throw new CustomException("DNI must be numeric");
         } else if (existingAddress.isPresent()) {
             patient.setAddress(existingAddress.get());
             return ResponseEntity.ok(patientService.save(patient));
@@ -73,22 +91,25 @@ public class PatientController {
     }
 
 
+
     @PutMapping("/{id}")
     public ResponseEntity<String> updatePatient(@PathVariable(value = "id") Long patientId,
-                                                 @RequestBody Patient patientDetails) {
+                                                @RequestBody Patient patientDetails) throws CustomException {
 
         System.out.println(patientId);
         Optional<Patient> patient = patientService.findById(patientId);
 
         if (patient.isEmpty()) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found for this id :: " + patientId);
+            throw new CustomException("Patient not found for this id :: " + patientId);
         }
 
         List<Patient> patientList = patientService.findAllNotDeleted();
 
         for (int i = 0; i < patientList.size(); i++) {
-            if (patientList.get(i).getDni() == patientDetails.getDni()){
-                return  ResponseEntity.status(HttpStatus.FOUND).body("Already a patient with that DNI!");
+            if (Objects.equals(patientList.get(i).getDni(), patientDetails.getDni())){
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Already a patient with that DNI!");
+                throw new CustomException("Already a patient with that DNI!");
             }
         }
 
@@ -128,16 +149,14 @@ public class PatientController {
 
         Patient updatedPatient = patientService.save(patientFound);
         return ResponseEntity.ok("Updated patient "+updatedPatient);
-
-
     }
 
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> safeDelete(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<String> safeDelete(@PathVariable(value = "id") Long id) throws CustomException {
         if (patientService.safeDelete(id) == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient could not be found");
+            throw new CustomException("Patient could not be found");
         }
         return ResponseEntity.ok().body("Patient deleted successfully");
     }
+
 }

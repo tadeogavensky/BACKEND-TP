@@ -5,9 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="70c48259-02fb-4c0b-afd7-2d7f92e37d0d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/config/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/exceptions/CustomException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend2.0/src/test/java/com/example/backend_v2/services/PatientServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/AppointmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/AppointmentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend2.0/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/config/WebConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/DentistController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/DentistController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/PatientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/controllers/PatientController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/entities/Patient.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/entities/Patient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/java/com/example/backend_v2/entities/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend2.0/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend2.0/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/Appoitment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/Appoitment.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/DentistTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/DentistTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/PatientTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/Clinic/PatientTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/user/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/user/LoginForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/frontend-app/src/components/user/SignupForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/frontend-app/src/components/user/SignupForm.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +34,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JUnit4 Test Class" />
-        <option value="Interface" />
+        <option value="Enum" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -50,22 +64,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit4&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4&quot;: &quot;&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;last_directory_selection&quot;: &quot;C:/Users/nngavensta/Desktop/BACKEND-TP/backend2.0/backend2.0/src/test/java&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Windows/Downloads/MovimientosHibernate&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit4",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4": "",
+    "dart.analysis.tool.window.visible": "false",
+    "last_directory_selection": "C:/Users/nngavensta/Desktop/BACKEND-TP/backend2.0/backend2.0/src/test/java",
+    "last_opened_file_path": "C:/Users/Windows/Desktop/clinica-odontologica",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Windows\Desktop\CTD\BACKEND\tp-backend-tadeogavensky\backend2.0\backend2.0" />
+    </key>
+    <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="com.example.backend_v2.entities" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="com.example.backend_v2.services" />
